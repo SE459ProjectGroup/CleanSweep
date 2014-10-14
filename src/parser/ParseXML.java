@@ -19,7 +19,7 @@ public class ParseXML {
 	
 	public static void main(String argv[]){
 		int a;
-		a=getCoordinateX();
+		a=getAllCoordinateY();
 	}
 	
 	public static void openFile(){
@@ -43,7 +43,7 @@ public class ParseXML {
 	
 
 	
-	public static int getCoordinateX(){
+	public static int getAllCoordinateX(){
 		
 		int coord_x=0; 
 		
@@ -76,8 +76,6 @@ public class ParseXML {
 					String x_str = eElementIn.getAttribute("xs");
 					System.out.println("xs: " + x_str);
 					coord_x = Integer.valueOf(String.valueOf(x_str)).intValue();
-					
-					//return  ;
 				}
 			}
 		
@@ -86,6 +84,49 @@ public class ParseXML {
 			
 		}
 		return coord_x;
+	}
+	
+	public static int getAllCoordinateY(){
+		
+		int coord_y = 0; 
+		
+		openFile();
+		
+		System.out.println("Root element: " + floor_plan.getDocumentElement().getNodeName() +"\n" );
+		
+		floor_plan.getDocumentElement().normalize();
+		floor_nodeList = floor_plan.getElementsByTagName("floor");
+		cell_nodeList= floor_plan.getElementsByTagName("cell");
+		
+		for (int i=0; i < floor_nodeList.getLength(); i++){
+			
+			Node node = floor_nodeList.item(i);
+			System.out.println("Current Element: " + node.getNodeName() + "\n");
+			
+			
+			
+			if(node.getNodeType() == Node.ELEMENT_NODE){
+				
+				Element eElement  =  (Element) node;
+				
+				for(int j = 0; j < cell_nodeList.getLength(); j++ ){
+					
+					Node nodeIn = cell_nodeList.item(j);
+					System.out.println("Current Element: " + nodeIn.getNodeName() + "\n");
+					
+					Element eElementIn  =  (Element) nodeIn;
+					
+					String y_str = eElementIn.getAttribute("ys");
+					System.out.println("ys: " + y_str);
+					coord_y = Integer.valueOf(String.valueOf(y_str)).intValue();
+				}
+			}
+		
+			
+			
+			
+		}
+		return coord_y;
 	}
 	
 }
