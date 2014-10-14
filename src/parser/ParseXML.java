@@ -39,10 +39,6 @@ public class ParseXML {
 		}
 	}
 	
-			
-	
-
-	
 	public static int getAllCoordinateX(){
 		
 		int coord_x=0; 
@@ -208,6 +204,15 @@ public class ParseXML {
 		}
 		return coord_y;
 	}
+
+	public static int getSurfaceType(int coord_x, int coord_y){
+		int surf = 0;
+		
+		
+		
+		return surf;
+	}
+
 }
 
 
