@@ -1,15 +1,21 @@
-package main.java.CleanSweep;
+package CleanSweep;
 
-import main.java.Navigation.*;
+import Navigation.*;
 
 public class CleanSweep {
 
 	private INavigator navigationController;
-
+	
+	
 	public CleanSweep() {
-
+		
 		navigationController = new NavigationController();
-
+		
+		
 	}
-
+	
+	
+	
+	
+	
 }
