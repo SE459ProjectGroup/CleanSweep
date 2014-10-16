@@ -207,13 +207,38 @@ public class ParseXML {
 
 	public static int getSurfaceType(int coord_x, int coord_y){
 		int surf = 0;
+		openFile();
 		
+		floor_plan.getDocumentElement().normalize();
+		floor_nodeList = floor_plan.getElementsByTagName("floor");
+		cell_nodeList= floor_plan.getElementsByTagName("cell");
 		
+		for (int i=0; i < floor_nodeList.getLength(); i++){
+			
+			Node node = floor_nodeList.item(i);
+			System.out.println("Current Element: " + node.getNodeName() + "\n");
+			
+			
+			
+			if(node.getNodeType() == Node.ELEMENT_NODE){
+				
+				Element eElement  =  (Element) node;
+				Node nodeIn = cell_nodeList.item(0);
+				Element eElementIn  =  (Element) nodeIn;
+				
+				if( (Integer.valueOf(String.valueOf(eElementIn.getAttribute("ys"))).intValue()== coord_y) &&
+						(Integer.valueOf(String.valueOf(eElementIn.getAttribute("xs"))).intValue()== coord_x)	){
+					return Integer.valueOf(String.valueOf(eElementIn.getAttribute("ss"))).intValue() ; 
+				}
+				
+			}
+		}
 		
 		return surf;
 	}
 
 }
+
 
 
 /*public static void main(String argv[]){
