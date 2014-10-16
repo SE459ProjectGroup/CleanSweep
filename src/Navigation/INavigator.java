@@ -27,4 +27,8 @@ public interface INavigator {
 	 */
 	void BeginAutoNavigation();
 	
+	/**
+	 * Tell the INavigator to stop autoNavigating
+	 */
+	void StopAutoNavigation();
 }
