@@ -1,9 +1,10 @@
 package Navigation;
 
 public class NavigationController implements INavigator {
-
 	
 	Coordinate currentLocation;
+	
+	NavigationState navState = NavigationState.Stopped;
 	
 	@Override
 	public void NavigateTo(Coordinate c) {
@@ -27,9 +28,25 @@ public class NavigationController implements INavigator {
 
 	@Override
 	public void BeginAutoNavigation() {
+		int maxMoves = 5;
+		int currentMoves = 0;
+		this.navState = NavigationState.Navigating;
 		
-		
+		while(this.navState == NavigationState.Navigating && currentMoves < maxMoves) {
+			
+			this.NavigateTo(new Coordinate(this.CurrentLocation().getX(), this.CurrentLocation().getY() + 1 ));
+			currentMoves++;
+		}
 		
 	}
+
+	@Override
+	public void StopAutoNavigation() {
+		
+		this.navState = NavigationState.Stopped;
+		
+	}
+	
+	
 	
 }
