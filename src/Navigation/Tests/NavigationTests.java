@@ -1,4 +1,4 @@
-package Navigation;
+package Navigation.Tests;
 
 import static org.junit.Assert.*;
 
@@ -6,6 +6,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 //import static org.mockito.Mockito.*;
+
+import Navigation.Coordinate;
+import Navigation.*;
 
 public class NavigationTests {
 
