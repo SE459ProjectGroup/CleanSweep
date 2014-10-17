@@ -13,6 +13,13 @@ public class NavigationController implements INavigator {
 		if (Math.abs(difX) > 1 || Math.abs(difY) > 1) {
 			throw new RuntimeException("You cannot navigate more than one space from our current location.");	
 		}
+		
+		if (this.navChecker != null) {
+			
+			boolean res = this.navChecker.CheckCoordinate(c);
+			if(res == false) { return; }
+		}
+		
 		this.currentLocation = c;
 		
 	}
@@ -80,6 +87,14 @@ public class NavigationController implements INavigator {
 			}
 			
 		}
+		
+	}
+
+	INavigationChecker navChecker;
+	
+	@Override
+	public void SetNavigationChecker(INavigationChecker inc) {
+		this.navChecker = inc;
 		
 	}
 	

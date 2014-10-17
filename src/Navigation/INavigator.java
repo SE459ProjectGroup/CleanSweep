@@ -11,6 +11,8 @@ package Navigation;
  */
 public interface INavigator {
 
+	INavigationChecker NavigationChecker = null;
+
 	/*
 	 * Send the navigator to the supplied coordinate. Should only be 1 grid space away
 	 */
@@ -37,4 +39,6 @@ public interface INavigator {
 	Coordinate GetDestinationPoint();
 
 	void MoveToDestination();
+
+	void SetNavigationChecker(INavigationChecker inc);
 }
