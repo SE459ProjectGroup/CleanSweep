@@ -5,9 +5,10 @@ import static org.junit.Assert.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-//import static org.mockito.Mockito.*;
+import org.mockito.Mockito;
 
-import Navigation.Coordinate;
+import static org.mockito.Mockito.*;
+
 import Navigation.*;
 
 public class NavigationTests {
@@ -77,7 +78,48 @@ public class NavigationTests {
 		boolean res = c.equals(toNavigate.CurrentLocation());
 		assertTrue(res);
 		
+	}
+
+	@Test
+	public void TestINavigatorCallsINavigationChecker() {
+		INavigationChecker inc = Mockito.mock(INavigationChecker.class);
 		
+		toNavigate.SetNavigationChecker(inc);
+		
+		toNavigate.MoveTo(new Coordinate(1,0));
+		
+		Mockito.verify(inc, Mockito.times(1));
+//		Mockito.verify(inc).CheckCoordinate(new Coordinate(0,1));
+	}
+	
+	
+	@Test
+	public void TestINavigatorDoesNotMoveToPointIfCheckerReturnsFalse() {
+		INavigationChecker inc = Mockito.mock(INavigationChecker.class);
+		Coordinate destination = new Coordinate(0,1);
+		when(inc.CheckCoordinate(destination)).thenReturn(false);
+
+		toNavigate.SetNavigationChecker(inc);
+		
+		toNavigate.MoveTo(destination);
+		
+		assertFalse(toNavigate.CurrentLocation().equals(destination));
+
+	}
+	
+	@Test
+	public void TestINavigatorMovesToCoordinateIfCheckerReturnsTrue() {
+		INavigationChecker inc = Mockito.mock(INavigationChecker.class);
+		Coordinate destination = new Coordinate(0,1);
+		when(inc.CheckCoordinate(destination)).thenReturn(true);
+		
+		toNavigate.SetNavigationChecker(inc);
+		
+		toNavigate.MoveTo(destination);
+		
+		assertTrue(toNavigate.CurrentLocation().equals(destination));
+		
+	
 	}
 	
 }
