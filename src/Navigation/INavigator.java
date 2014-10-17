@@ -35,4 +35,6 @@ public interface INavigator {
 	void SetDestinationPoint(Coordinate c);
 
 	Coordinate GetDestinationPoint();
+
+	void MoveToDestination();
 }

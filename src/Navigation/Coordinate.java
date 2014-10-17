@@ -35,7 +35,7 @@ public class Coordinate {
 			
 			if (obj instanceof Coordinate ) {
 				Coordinate co = (Coordinate)obj;
-				if (this.getX() == co.getX() && this.getX() == co.getY()) {
+				if (this.getX() == co.getX() && this.getY() == co.getY()) {
 					return true;
 					
 				}
