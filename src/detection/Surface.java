@@ -21,6 +21,8 @@ public class Surface {
 		this.surf_type = surface;
 	}
 	
+	
+	
 	public String getSurfaceFromCoordinate(Coordinate coord){
 		String surface = null;
 		
