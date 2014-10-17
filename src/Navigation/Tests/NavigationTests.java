@@ -67,4 +67,17 @@ public class NavigationTests {
 		
 	}
 	
+	@Test
+	public void TestINavigatorMovesToDestinationPoint() {
+		
+		Coordinate c = new Coordinate(5,5);
+		toNavigate.SetDestinationPoint(c);
+		
+		toNavigate.MoveToDestination();
+		boolean res = c.equals(toNavigate.CurrentLocation());
+		assertTrue(res);
+		
+		
+	}
+	
 }

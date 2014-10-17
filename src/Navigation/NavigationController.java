@@ -59,6 +59,29 @@ public class NavigationController implements INavigator {
 	public Coordinate GetDestinationPoint() {
 		return this.destinationPoint;
 	}
+
+	@Override
+	public void MoveToDestination() {
+		
+		int xDelta, yDelta;
+		while (this.CurrentLocation().equals(this.GetDestinationPoint()) == false) {
+			xDelta = this.CurrentLocation().getX() - this.GetDestinationPoint().getX();
+			yDelta = this.CurrentLocation().getY() - this.GetDestinationPoint().getY();
+			if (xDelta != 0 ) {
+				
+				this.MoveTo(new Coordinate(this.CurrentLocation().getX() + ((xDelta > 0)? -1:1) ,this.CurrentLocation().getY()));
+				
+			} else {
+				
+				
+				if (yDelta != 0) {
+					this.MoveTo(new Coordinate(this.CurrentLocation().getX(),this.CurrentLocation().getY()  + ((yDelta > 0)? -1:1) ));
+				}
+			}
+			
+		}
+		
+	}
 	
 	
 	
