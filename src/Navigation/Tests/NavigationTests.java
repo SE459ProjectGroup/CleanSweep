@@ -30,7 +30,7 @@ public class NavigationTests {
 	public void TestCurrentLocationUpdatesAfterNavigateTo() {
 		
 		Coordinate c = new Coordinate(0, 1);
-		toNavigate.NavigateTo(c);
+		toNavigate.MoveTo(c);
 		
 		assert(toNavigate.CurrentLocation().equals(c));
 		
@@ -45,7 +45,7 @@ public class NavigationTests {
 	public void TestExceptionIsThrownIfAttemptingToMoveMoreThanOneSpace() {
 		
 		Coordinate c = new Coordinate(2,5);
-		toNavigate.NavigateTo(c);
+		toNavigate.MoveTo(c);
 		
 	}
 	
@@ -58,4 +58,13 @@ public class NavigationTests {
 		
 	}
 
+	@Test
+	public void TestINavigatorSetDestinationPointIsSaved() {
+		
+		Coordinate c = new Coordinate(10,10);
+		toNavigate.SetDestinationPoint(c);
+		assert(c.equals(toNavigate.GetDestinationPoint()));
+		
+	}
+	
 }

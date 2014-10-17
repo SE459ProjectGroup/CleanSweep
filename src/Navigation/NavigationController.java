@@ -7,7 +7,7 @@ public class NavigationController implements INavigator {
 	NavigationState navState = NavigationState.Stopped;
 	
 	@Override
-	public void NavigateTo(Coordinate c) {
+	public void MoveTo(Coordinate c) {
 		int difX = c.getX() - this.currentLocation.getX();
 		int difY = c.getY() - this.currentLocation.getY();
 		if (Math.abs(difX) > 1 || Math.abs(difY) > 1) {
@@ -34,7 +34,7 @@ public class NavigationController implements INavigator {
 		
 		while(this.navState == NavigationState.Navigating && currentMoves < maxMoves) {
 			
-			this.NavigateTo(new Coordinate(this.CurrentLocation().getX(), this.CurrentLocation().getY() + 1 ));
+			this.MoveTo(new Coordinate(this.CurrentLocation().getX(), this.CurrentLocation().getY() + 1 ));
 			currentMoves++;
 		}
 		
@@ -45,6 +45,19 @@ public class NavigationController implements INavigator {
 		
 		this.navState = NavigationState.Stopped;
 		
+	}
+	
+	Coordinate destinationPoint;
+
+	@Override
+	public void SetDestinationPoint(Coordinate c) {
+		this.destinationPoint = c;
+		
+	}
+
+	@Override
+	public Coordinate GetDestinationPoint() {
+		return this.destinationPoint;
 	}
 	
 	

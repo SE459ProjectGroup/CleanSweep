@@ -14,7 +14,7 @@ public interface INavigator {
 	/*
 	 * Send the navigator to the supplied coordinate. Should only be 1 grid space away
 	 */
-	void NavigateTo(Coordinate c);
+	void MoveTo(Coordinate c);
 
 	/**
 	 * Get the current location of the object
@@ -31,4 +31,8 @@ public interface INavigator {
 	 * Tell the INavigator to stop autoNavigating
 	 */
 	void StopAutoNavigation();
+
+	void SetDestinationPoint(Coordinate c);
+
+	Coordinate GetDestinationPoint();
 }
