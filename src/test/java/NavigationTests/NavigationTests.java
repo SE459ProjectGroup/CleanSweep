@@ -24,7 +24,8 @@ public class NavigationTests {
 	}
 
 	@After
-	public void tearDown() throws Exception {
+	public void validate() {
+	    validateMockitoUsage();
 	}
 
 	@Test
@@ -49,15 +50,7 @@ public class NavigationTests {
 		toNavigate.MoveTo(c);
 		
 	}
-	
-//	@Test
-//	public void TestBeginAutoNavigationMovesObjectFromOrigin() {
-//		
-//		toNavigate.BeginAutoNavigation();
-//		boolean test = (new Coordinate(0,0).equals(toNavigate.CurrentLocation()));
-//		assertFalse(test);
-//		
-//	}
+
 
 	@Test
 	public void TestINavigatorSetDestinationPointIsSaved() {
@@ -85,11 +78,10 @@ public class NavigationTests {
 		INavigationChecker inc = Mockito.mock(INavigationChecker.class);
 		
 		toNavigate.SetNavigationChecker(inc);
+		Coordinate d = new Coordinate(1,0);
+		toNavigate.MoveTo(d);
 		
-		toNavigate.MoveTo(new Coordinate(1,0));
-		
-		Mockito.verify(inc, Mockito.times(1));
-//		Mockito.verify(inc).CheckCoordinate(new Coordinate(0,1));
+		verify(inc).CheckCoordinate(d);
 	}
 	
 	
@@ -104,7 +96,7 @@ public class NavigationTests {
 		toNavigate.MoveTo(destination);
 		
 		assertFalse(toNavigate.CurrentLocation().equals(destination));
-
+		//verify(inc);
 	}
 	
 	@Test
@@ -143,5 +135,22 @@ public class NavigationTests {
 		assertTrue(toNavigate.CurrentLocation().equals(destination));
 		
 	}
+	
+	@Test
+	public void TestINavigatorNotifiesWhenItHasNavigatedToACoordinate() {
+		
+		
+		INavigationObserver observer = mock(INavigationObserver.class);
+	
+		toNavigate.addNavigationObserver(observer);
+		
+		Coordinate destination = new Coordinate(0,1);
+		
+		toNavigate.MoveTo(destination);
+		
+		verify(observer).didNavigate(destination);
+		
+	}
+	
 	
 }

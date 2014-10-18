@@ -41,4 +41,6 @@ public interface INavigator {
 	void MoveToDestination();
 
 	void SetNavigationChecker(INavigationChecker inc);
+
+	void addNavigationObserver(INavigationObserver observer);
 }

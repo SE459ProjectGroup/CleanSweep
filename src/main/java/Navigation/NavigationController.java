@@ -1,5 +1,8 @@
 package main.java.Navigation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class NavigationController implements INavigator {
 	
 	Coordinate currentLocation;
@@ -25,8 +28,13 @@ public class NavigationController implements INavigator {
 		}
 		System.out.println("MoveTo: Moving to accepted");
 		this.currentLocation = c;
+		
+		this.notifyObservers();
+		
 		return true;
 	}
+
+
 
 	@Override
 	public Coordinate CurrentLocation() {
@@ -139,7 +147,36 @@ public class NavigationController implements INavigator {
 		this.navChecker = inc;
 		
 	}
+
 	
+	List<INavigationObserver> navigationObservers = new ArrayList<INavigationObserver>();
 	
+	@Override
+	public void addNavigationObserver(INavigationObserver observer) {
+		if (observer != null ) {
+			
+			navigationObservers.add(observer);
+			
+		}
+		
+	}
+	
+	private void notifyObservers() {
+		
+		for(INavigationObserver obs: this.navigationObservers) {
+			try	{
+				
+				obs.didNavigate(currentLocation);
+				
+			} catch(Exception e) {
+				System.out.println("INavigationObserver didNavigate Exception: " + e.getMessage());
+				
+			}
+			
+			
+		}
+		
+		
+	}
 	
 }
