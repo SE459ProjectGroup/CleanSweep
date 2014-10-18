@@ -7,7 +7,8 @@ public class NavigationController implements INavigator {
 	NavigationState navState = NavigationState.Stopped;
 	
 	@Override
-	public void MoveTo(Coordinate c) {
+	public boolean MoveTo(Coordinate c) {
+		System.out.println("MoveTo: Moving to " + c.toString() + " from " + this.CurrentLocation());
 		int difX = c.getX() - this.currentLocation.getX();
 		int difY = c.getY() - this.currentLocation.getY();
 		if (Math.abs(difX) > 1 || Math.abs(difY) > 1) {
@@ -17,11 +18,14 @@ public class NavigationController implements INavigator {
 		if (this.navChecker != null) {
 			
 			boolean res = this.navChecker.CheckCoordinate(c);
-			if(res == false) { return; }
+			if(res == false) { 
+				System.out.println("MoveTo: Cannot Move To Location");
+				return false; 
+			}
 		}
-		
+		System.out.println("MoveTo: Moving to accepted");
 		this.currentLocation = c;
-		
+		return true;
 	}
 
 	@Override
@@ -33,19 +37,22 @@ public class NavigationController implements INavigator {
 		this.currentLocation = new Coordinate(0,0);
 	}
 
-	@Override
-	public void BeginAutoNavigation() {
-		int maxMoves = 5;
-		int currentMoves = 0;
-		this.navState = NavigationState.Navigating;
-		
-		while(this.navState == NavigationState.Navigating && currentMoves < maxMoves) {
-			
-			this.MoveTo(new Coordinate(this.CurrentLocation().getX(), this.CurrentLocation().getY() + 1 ));
-			currentMoves++;
-		}
-		
-	}
+//	@Override
+//	public void BeginAutoNavigation() {
+//		int maxMoves = 5;
+//		int currentMoves = 0;
+//		this.navState = NavigationState.Navigating;
+//		
+//		while(this.navState == NavigationState.Navigating && currentMoves < maxMoves) {
+//			
+//			if(this.MoveTo(new Coordinate(this.CurrentLocation().getX(), this.CurrentLocation().getY() + 1 )) == false) {
+//				
+//				this.navState = NavigationState.Stopped;
+//			}
+//			currentMoves++;
+//		}
+//		
+//	}
 
 	@Override
 	public void StopAutoNavigation() {
@@ -71,22 +78,57 @@ public class NavigationController implements INavigator {
 	public void MoveToDestination() {
 		
 		int xDelta, yDelta;
-		while (this.CurrentLocation().equals(this.GetDestinationPoint()) == false) {
+		this.navState = NavigationState.Navigating;
+		
+		while (this.navState == NavigationState.Navigating && this.CurrentLocation().equals(this.GetDestinationPoint()) == false) {
 			xDelta = this.CurrentLocation().getX() - this.GetDestinationPoint().getX();
 			yDelta = this.CurrentLocation().getY() - this.GetDestinationPoint().getY();
 			if (xDelta != 0 ) {
 				
-				this.MoveTo(new Coordinate(this.CurrentLocation().getX() + ((xDelta > 0)? -1:1) ,this.CurrentLocation().getY()));
+				if(this.MoveTo(new Coordinate(this.CurrentLocation().getX() + ((xDelta > 0)? -1:1) ,this.CurrentLocation().getY())) == false) {
+					//we couldnt move horizontally.
+					int movedUpCount = 0;
+					boolean movedHorizontally = false;
+					boolean failedToMoveVertically = false;
+					while(movedUpCount < 5 && movedHorizontally == false && failedToMoveVertically == false) {
+						if(this.MoveTo(new Coordinate(this.CurrentLocation().getX(), this.CurrentLocation().getY() + 1))) {
+							movedUpCount++;
+							movedHorizontally = this.MoveTo(new Coordinate(this.CurrentLocation().getX() + ((xDelta > 0)? -1:1) , this.CurrentLocation().getY()));
+						} else {
+							
+							failedToMoveVertically = true;
+							
+						}
+					}
+				}
 				
 			} else {
 				
 				
 				if (yDelta != 0) {
-					this.MoveTo(new Coordinate(this.CurrentLocation().getX(),this.CurrentLocation().getY()  + ((yDelta > 0)? -1:1) ));
+					if(this.MoveTo(new Coordinate(this.CurrentLocation().getX(),this.CurrentLocation().getY()  + ((yDelta > 0)? -1:1) )) == false) {
+						//we couldnt move vertically
+						//we couldnt move horizontally.
+						int movedUpCount = 0;
+						boolean movedVertically = false;
+						boolean failedToMoveHorizontally = false;
+						while(movedUpCount < 5 && movedVertically == false && failedToMoveHorizontally == false) {
+							if(this.MoveTo(new Coordinate(this.CurrentLocation().getX() + 1, this.CurrentLocation().getY()))) {
+								movedUpCount++;
+								movedVertically = this.MoveTo(new Coordinate(this.CurrentLocation().getX(), this.CurrentLocation().getY() + ((yDelta > 0)? -1:1) ));
+							} else {
+								
+								failedToMoveHorizontally = true;
+								
+							}
+						}
+					}
 				}
 			}
 			
 		}
+		
+		this.navState = NavigationState.Stopped;
 		
 	}
 

@@ -50,14 +50,14 @@ public class NavigationTests {
 		
 	}
 	
-	@Test
-	public void TestBeginAutoNavigationMovesObjectFromOrigin() {
-		
-		toNavigate.BeginAutoNavigation();
-		boolean test = (new Coordinate(0,0).equals(toNavigate.CurrentLocation()));
-		assertFalse(test);
-		
-	}
+//	@Test
+//	public void TestBeginAutoNavigationMovesObjectFromOrigin() {
+//		
+//		toNavigate.BeginAutoNavigation();
+//		boolean test = (new Coordinate(0,0).equals(toNavigate.CurrentLocation()));
+//		assertFalse(test);
+//		
+//	}
 
 	@Test
 	public void TestINavigatorSetDestinationPointIsSaved() {
@@ -120,6 +120,28 @@ public class NavigationTests {
 		assertTrue(toNavigate.CurrentLocation().equals(destination));
 		
 	
+	}
+	
+	
+	@Test
+	public void TestINavigatorMovesAroundObjectIfItCannotNavigateToASpotInItsDefaultPath() {
+	
+		INavigationChecker inc = Mockito.mock(INavigationChecker.class);
+		
+		Coordinate obstacle = new Coordinate(0,1);
+		Coordinate destination = new Coordinate(0,2);
+		
+		when(inc.CheckCoordinate((Coordinate) anyObject())).thenReturn(true);
+		when(inc.CheckCoordinate(obstacle)).thenReturn(false);
+		
+		toNavigate.SetNavigationChecker(inc);
+		
+		toNavigate.SetDestinationPoint(destination);
+		
+		toNavigate.MoveToDestination();
+		
+		assertTrue(toNavigate.CurrentLocation().equals(destination));
+		
 	}
 	
 }
