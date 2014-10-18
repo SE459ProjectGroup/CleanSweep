@@ -1,4 +1,4 @@
-package cleansweep;
+package main.java.PowerManagement;
 
 /**
  *

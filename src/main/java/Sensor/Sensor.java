@@ -1,10 +1,10 @@
-package Sensor;
+package main.java.Sensor;
 
 import java.util.ArrayList;
 
-import Navigation.Coordinate;
-import Navigation.INavigator;
-import Surface.SurfaceType;
+import main.java.Navigation.Coordinate;
+import main.java.Navigation.INavigator;
+import main.java.Surface.SurfaceType;
 
 public class Sensor implements iSensor{
 	

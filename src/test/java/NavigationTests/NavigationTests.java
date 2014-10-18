@@ -1,6 +1,8 @@
-package Navigation.Tests;
+package test.java.NavigationTests;
 
 import static org.junit.Assert.*;
+
+import main.java.Navigation.*;
 
 import org.junit.After;
 import org.junit.Before;
@@ -8,8 +10,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import static org.mockito.Mockito.*;
-
-import Navigation.*;
 
 public class NavigationTests {
 

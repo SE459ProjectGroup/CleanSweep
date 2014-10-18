@@ -1,7 +1,7 @@
-package detection;
+package main.java.detection;
 
-import Navigation.Coordinate;
-import parser.ParseXML;
+import main.java.Navigation.Coordinate;
+import main.java.parser.ParseXML;
 
 public class Dirt {
 	int dirt;

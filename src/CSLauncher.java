@@ -1,4 +1,4 @@
-import CleanSweep.CleanSweep;
+import main.java.CleanSweep.CleanSweep;
 
 
 public class CSLauncher {

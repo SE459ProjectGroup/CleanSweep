@@ -1,4 +1,4 @@
-package Surface;
+package main.java.Surface;
 
 public class SurfaceType {
 	

@@ -1,4 +1,4 @@
-package Navigation;
+package main.java.Navigation;
 
 public class NavigationController implements INavigator {
 	
