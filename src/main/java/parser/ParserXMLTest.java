@@ -1,8 +1,8 @@
-package parser;
+package main.java.parser;
 
 import org.junit.Before;
 import org.junit.Test;
-import parser.ParseXML;
+import main.java.parser.ParseXML;
 
 public class ParserXMLTest {
 	

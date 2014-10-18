@@ -1,6 +1,6 @@
-package CleanSweep;
+package main.java.CleanSweep;
 
-import Navigation.*;
+import main.java.Navigation.*;
 
 public class CleanSweep {
 

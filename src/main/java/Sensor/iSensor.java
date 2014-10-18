@@ -1,6 +1,6 @@
-package Sensor;
+package main.java.Sensor;
 
-import Navigation.INavigator;
+import main.java.Navigation.INavigator;
 
 public interface iSensor {
 	

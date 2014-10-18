@@ -1,4 +1,4 @@
-package Navigation;
+package main.java.Navigation;
 
 /**
  * Interface used to expose navigation functionality to a consumer.

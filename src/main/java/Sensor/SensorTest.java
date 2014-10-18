@@ -1,4 +1,4 @@
-package Sensor;
+package main.java.Sensor;
 
 import static org.junit.Assert.*;
 import junit.framework.TestCase;
