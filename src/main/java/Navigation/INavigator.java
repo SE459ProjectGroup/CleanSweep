@@ -43,4 +43,8 @@ public interface INavigator {
 	void SetNavigationChecker(INavigationChecker inc);
 
 	void addNavigationObserver(INavigationObserver observer);
+
+	void returnToOrigin();
+
+	int GetWeightedCostToOrigin();
 }

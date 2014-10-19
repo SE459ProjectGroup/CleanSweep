@@ -178,5 +178,57 @@ public class NavigationController implements INavigator {
 		
 		
 	}
+
+
+
+	@Override
+	public void returnToOrigin() {
+		
+		this.SetDestinationPoint(new Coordinate(0,0));
+		
+		this.MoveToDestination();
+		
+	}
+
+
+
+	@Override
+	public int GetWeightedCostToOrigin() {
+		
+		
+		class OriginWeightTracker implements INavigationObserver {
+			
+			private int weight;
+			
+			@Override
+			public void didNavigate(Coordinate navigatedTo) {
+				
+				weight++;
+				
+			}
+			
+			
+			public int getTrackedWeight() {
+				
+				return weight;
+				
+			}
+			
+		}
+		
+		INavigator childNavigator = new NavigationController();
+		
+		childNavigator.SetDestinationPoint(this.CurrentLocation());
+		childNavigator.MoveToDestination();
+		
+		
+		OriginWeightTracker tracker = new OriginWeightTracker();
+		
+		childNavigator.addNavigationObserver(tracker);
+		
+		childNavigator.returnToOrigin();
+		
+		return tracker.getTrackedWeight();
+	}
 	
 }

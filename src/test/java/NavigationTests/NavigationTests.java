@@ -11,7 +11,7 @@ import org.mockito.Mockito;
 
 import static org.mockito.Mockito.*;
 
-public class NavigationTests {
+public class NavigationTests implements INavigationObserver {
 
 	
 	private INavigator toNavigate;
@@ -151,6 +151,55 @@ public class NavigationTests {
 		verify(observer).didNavigate(destination);
 		
 	}
+	
+	@Test
+	public void TestNavigatorReturnsToOrgin() {
+	
+		Coordinate destination = new Coordinate(10,10);
+		
+		toNavigate.SetDestinationPoint(destination);
+		
+		toNavigate.MoveToDestination();
+		
+		assertTrue(toNavigate.CurrentLocation().equals(destination));
+		
+		toNavigate.returnToOrigin();
+		
+		assertTrue(toNavigate.CurrentLocation().equals(new Coordinate(0,0)));
+	
+	}
+	
+	
+	
+	
+	@Test
+	public void TestNavigatorReturnsAccurateWeightedPointsToOrigin() {
+		
+		Coordinate destination = new Coordinate(10,10);
+		
+		toNavigate.SetDestinationPoint(destination);
+		
+		toNavigate.MoveToDestination();
+		
+		toNavigate.addNavigationObserver(this);
+		
+		int weightedToHome = toNavigate.GetWeightedCostToOrigin();
+		
+		toNavigate.returnToOrigin();
+		
+		assertTrue(this.manualOriginWeightTracker == weightedToHome);
+	}
+
+	private int manualOriginWeightTracker;
+	
+	@Override
+	public void didNavigate(Coordinate navigatedTo) {
+		
+		manualOriginWeightTracker++;
+		
+		
+	}
+
 	
 	
 }
