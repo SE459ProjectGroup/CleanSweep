@@ -51,6 +51,13 @@ public class NavigationTests implements INavigationObserver {
 		
 	}
 
+	@Test(expected=RuntimeException.class)
+	public void TestExceptionIsThrownIfAttemptingToMoveDiagonally() {
+		
+		Coordinate c = new Coordinate(1,1);
+		toNavigate.MoveTo(c);
+		
+	}
 
 	@Test
 	public void TestINavigatorSetDestinationPointIsSaved() {
@@ -72,7 +79,7 @@ public class NavigationTests implements INavigationObserver {
 		assertTrue(res);
 		
 	}
-
+	
 	@Test
 	public void TestINavigatorCallsINavigationChecker() {
 		INavigationChecker inc = Mockito.mock(INavigationChecker.class);

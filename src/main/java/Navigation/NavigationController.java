@@ -16,9 +16,9 @@ public class NavigationController implements INavigator {
 	@Override
 	public boolean MoveTo(Coordinate c) {
 		System.out.println("MoveTo: Moving to " + c.toString() + " from " + this.CurrentLocation());
-		int difX = c.getX() - this.currentLocation.getX();
-		int difY = c.getY() - this.currentLocation.getY();
-		if (Math.abs(difX) > 1 || Math.abs(difY) > 1) {
+		int difX = Math.abs(c.getX() - this.currentLocation.getX());
+		int difY = Math.abs(c.getY() - this.currentLocation.getY());
+		if ((difX + difY) > 1 ) {
 			throw new RuntimeException("You cannot navigate more than one space from our current location.");	
 		}
 		
