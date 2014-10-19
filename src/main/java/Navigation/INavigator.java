@@ -47,4 +47,9 @@ public interface INavigator {
 	void returnToOrigin();
 
 	int GetWeightedCostToOrigin();
+
+	void roam(int i);
+
+	Coordinate PreviousLocation();
+
 }

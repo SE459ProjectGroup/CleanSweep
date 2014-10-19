@@ -200,6 +200,27 @@ public class NavigationTests implements INavigationObserver {
 		
 	}
 
+	@Test
+	public void TestPreviousLocationIsAccurate() {
+		
+		Coordinate next = new Coordinate(0,1);
+		
+		toNavigate.MoveTo(next);
+		
+		assertTrue(toNavigate.PreviousLocation().equals(new Coordinate(0,0)));
+		
+	}
+	
+
+	@Test 
+	public void TestAutoRoamMovesINavigator() {
+		
+		toNavigate.addNavigationObserver(this);
+		toNavigate.roam(10);
+		
+		assertFalse(toNavigate.CurrentLocation().equals(new Coordinate(0,0)));
+		
+	}
 	
 	
 }

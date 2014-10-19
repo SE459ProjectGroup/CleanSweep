@@ -2,12 +2,17 @@ package main.java.Navigation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class NavigationController implements INavigator {
 	
 	Coordinate currentLocation;
 	
+	private Coordinate previousLocation;
+	
 	NavigationState navState = NavigationState.Stopped;
+
+	
 	
 	@Override
 	public boolean MoveTo(Coordinate c) {
@@ -27,6 +32,7 @@ public class NavigationController implements INavigator {
 			}
 		}
 		System.out.println("MoveTo: Moving to accepted");
+		this.previousLocation = this.currentLocation;
 		this.currentLocation = c;
 		
 		this.notifyObservers();
@@ -41,6 +47,11 @@ public class NavigationController implements INavigator {
 		return this.currentLocation;
 	}
 
+	@Override
+	public Coordinate PreviousLocation() {
+		return this.previousLocation;
+	}
+	
 	public NavigationController() {
 		this.currentLocation = new Coordinate(0,0);
 	}
@@ -229,6 +240,50 @@ public class NavigationController implements INavigator {
 		childNavigator.returnToOrigin();
 		
 		return tracker.getTrackedWeight();
+	}
+
+
+
+	@Override
+	public void roam(int count) {
+		
+		
+		List<Coordinate> possibleMoves = null;
+		boolean didMove;
+		
+		for(int i = 0; i < count; i++) {
+			didMove = false;
+			//load the next possible moves
+			possibleMoves = new ArrayList<Coordinate>() {{
+				add(new Coordinate(currentLocation.getX(),currentLocation.getY() + 1));
+				add(new Coordinate(currentLocation.getX() + 1,currentLocation.getY()));
+				add(new Coordinate(currentLocation.getX(),currentLocation.getY() - 1));
+				add(new Coordinate(currentLocation.getX() - 1,currentLocation.getY()));			
+			}};
+			
+			try {
+				
+				possibleMoves.remove(this.PreviousLocation());
+				
+			} catch(Exception e) {
+				
+				
+			}
+			
+			for(Coordinate test : possibleMoves) {
+				if(this.MoveTo(test)) {
+					didMove = true;
+					break;
+				}
+			}
+			
+			if (didMove == false) {
+				//we couldnt move to any of the possible moves, back it up!
+				this.MoveTo(this.PreviousLocation());
+				
+			}
+		}
+		
 	}
 	
 }
