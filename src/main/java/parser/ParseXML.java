@@ -268,6 +268,9 @@ public class ParseXML {
 		
 		return dirt;
 	}
+	
+	
+		
 
 	public static int getPathsFromCoordinates(int coord_x, int coord_y){
 		int path=0;
