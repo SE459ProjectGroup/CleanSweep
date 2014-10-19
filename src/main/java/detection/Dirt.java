@@ -5,6 +5,10 @@ import main.java.parser.ParseXML;
 
 public class Dirt {
 	int dirt;
+	
+	public Dirt() {
+		
+	}
 
 	public int getDirt() {
 		return dirt;
@@ -29,4 +33,8 @@ public class Dirt {
 		
 		return d;		
 	}
+	
+	
+	
+	
 }
