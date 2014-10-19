@@ -16,7 +16,7 @@ public interface INavigator {
 	/*
 	 * Send the navigator to the supplied coordinate. Should only be 1 grid space away
 	 */
-	void MoveTo(Coordinate c);
+	boolean MoveTo(Coordinate c);
 
 	/**
 	 * Get the current location of the object
@@ -27,7 +27,7 @@ public interface INavigator {
 	/**
 	 * Tell the INavigator object to begin moving independent of individual commands
 	 */
-	void BeginAutoNavigation();
+	//void BeginAutoNavigation();
 	
 	/**
 	 * Tell the INavigator to stop autoNavigating
@@ -41,4 +41,15 @@ public interface INavigator {
 	void MoveToDestination();
 
 	void SetNavigationChecker(INavigationChecker inc);
+
+	void addNavigationObserver(INavigationObserver observer);
+
+	void returnToOrigin();
+
+	int GetWeightedCostToOrigin();
+
+	void roam(int i);
+
+	Coordinate PreviousLocation();
+
 }

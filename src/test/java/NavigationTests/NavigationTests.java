@@ -11,7 +11,7 @@ import org.mockito.Mockito;
 
 import static org.mockito.Mockito.*;
 
-public class NavigationTests {
+public class NavigationTests implements INavigationObserver {
 
 	
 	private INavigator toNavigate;
@@ -24,7 +24,8 @@ public class NavigationTests {
 	}
 
 	@After
-	public void tearDown() throws Exception {
+	public void validate() {
+	    validateMockitoUsage();
 	}
 
 	@Test
@@ -49,13 +50,12 @@ public class NavigationTests {
 		toNavigate.MoveTo(c);
 		
 	}
-	
-	@Test
-	public void TestBeginAutoNavigationMovesObjectFromOrigin() {
+
+	@Test(expected=RuntimeException.class)
+	public void TestExceptionIsThrownIfAttemptingToMoveDiagonally() {
 		
-		toNavigate.BeginAutoNavigation();
-		boolean test = (new Coordinate(0,0).equals(toNavigate.CurrentLocation()));
-		assertFalse(test);
+		Coordinate c = new Coordinate(1,1);
+		toNavigate.MoveTo(c);
 		
 	}
 
@@ -79,17 +79,16 @@ public class NavigationTests {
 		assertTrue(res);
 		
 	}
-
+	
 	@Test
 	public void TestINavigatorCallsINavigationChecker() {
 		INavigationChecker inc = Mockito.mock(INavigationChecker.class);
 		
 		toNavigate.SetNavigationChecker(inc);
+		Coordinate d = new Coordinate(1,0);
+		toNavigate.MoveTo(d);
 		
-		toNavigate.MoveTo(new Coordinate(1,0));
-		
-		Mockito.verify(inc, Mockito.times(1));
-//		Mockito.verify(inc).CheckCoordinate(new Coordinate(0,1));
+		verify(inc).CheckCoordinate(d);
 	}
 	
 	
@@ -104,7 +103,7 @@ public class NavigationTests {
 		toNavigate.MoveTo(destination);
 		
 		assertFalse(toNavigate.CurrentLocation().equals(destination));
-
+		//verify(inc);
 	}
 	
 	@Test
@@ -121,5 +120,114 @@ public class NavigationTests {
 		
 	
 	}
+	
+	
+	@Test
+	public void TestINavigatorMovesAroundObjectIfItCannotNavigateToASpotInItsDefaultPath() {
+	
+		INavigationChecker inc = Mockito.mock(INavigationChecker.class);
+		
+		Coordinate obstacle = new Coordinate(0,1);
+		Coordinate destination = new Coordinate(0,2);
+		
+		when(inc.CheckCoordinate((Coordinate) anyObject())).thenReturn(true);
+		when(inc.CheckCoordinate(obstacle)).thenReturn(false);
+		
+		toNavigate.SetNavigationChecker(inc);
+		
+		toNavigate.SetDestinationPoint(destination);
+		
+		toNavigate.MoveToDestination();
+		
+		assertTrue(toNavigate.CurrentLocation().equals(destination));
+		
+	}
+	
+	@Test
+	public void TestINavigatorNotifiesWhenItHasNavigatedToACoordinate() {
+		
+		
+		INavigationObserver observer = mock(INavigationObserver.class);
+	
+		toNavigate.addNavigationObserver(observer);
+		
+		Coordinate destination = new Coordinate(0,1);
+		
+		toNavigate.MoveTo(destination);
+		
+		verify(observer).didNavigate(destination);
+		
+	}
+	
+	@Test
+	public void TestNavigatorReturnsToOrgin() {
+	
+		Coordinate destination = new Coordinate(10,10);
+		
+		toNavigate.SetDestinationPoint(destination);
+		
+		toNavigate.MoveToDestination();
+		
+		assertTrue(toNavigate.CurrentLocation().equals(destination));
+		
+		toNavigate.returnToOrigin();
+		
+		assertTrue(toNavigate.CurrentLocation().equals(new Coordinate(0,0)));
+	
+	}
+	
+	
+	
+	
+	@Test
+	public void TestNavigatorReturnsAccurateWeightedPointsToOrigin() {
+		
+		Coordinate destination = new Coordinate(10,10);
+		
+		toNavigate.SetDestinationPoint(destination);
+		
+		toNavigate.MoveToDestination();
+		
+		toNavigate.addNavigationObserver(this);
+		
+		int weightedToHome = toNavigate.GetWeightedCostToOrigin();
+		
+		toNavigate.returnToOrigin();
+		
+		assertTrue(this.manualOriginWeightTracker == weightedToHome);
+	}
+
+	private int manualOriginWeightTracker;
+	
+	@Override
+	public void didNavigate(Coordinate navigatedTo) {
+		
+		manualOriginWeightTracker++;
+		
+		
+	}
+
+	@Test
+	public void TestPreviousLocationIsAccurate() {
+		
+		Coordinate next = new Coordinate(0,1);
+		
+		toNavigate.MoveTo(next);
+		
+		assertTrue(toNavigate.PreviousLocation().equals(new Coordinate(0,0)));
+		
+	}
+	
+
+	@Test 
+	public void TestAutoRoamMovesINavigator() {
+		
+		toNavigate.addNavigationObserver(this);
+		toNavigate.roam(10);
+		
+		assertFalse(toNavigate.CurrentLocation().equals(new Coordinate(0,0)));
+		
+	}
+	
 	
 }

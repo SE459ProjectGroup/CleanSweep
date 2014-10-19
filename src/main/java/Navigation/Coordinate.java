@@ -28,6 +28,12 @@ public class Coordinate {
 		
 	}
 	
+	@Override
+	public String toString() {
+		
+		return "Coordinate: x = " + this.getX() + ", y = " + this.getY();
+		
+	}
 	
 	@Override
 	public boolean equals(Object obj) {
@@ -41,9 +47,6 @@ public class Coordinate {
 				}
 				
 			}
-			
-			
-			
 			
 		} catch(Exception e) {
 			//maybe a null reference exception
