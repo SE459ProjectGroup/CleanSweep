@@ -1,14 +1,21 @@
-package main.java.parser;
+package main.java.Sensor.XMLParser;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
+
+
+import main.java.Sensor.*;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
-public class ParseXML {
+public class ParseXML implements ISensorDataSource {
 		
 	static DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 	static DocumentBuilder dBuilder;
@@ -68,7 +75,7 @@ public class ParseXML {
 					System.out.println("Current Element: " + nodeIn.getNodeName() + "\n");
 					
 					Element eElementIn  =  (Element) nodeIn;
-					
+
 					String x_str = eElementIn.getAttribute("xs");
 					System.out.println("xs: " + x_str);
 					coord_x = Integer.valueOf(String.valueOf(x_str)).intValue();
@@ -341,6 +348,62 @@ public class ParseXML {
 		return charg_station;
 
 	}
+ 	
+ 	public List<SensorCell> LoadAllCellsFromSource(){
+		
+ 		ArrayList<SensorCell> results = new ArrayList<SensorCell>();
+ 		boolean charg_station = false;
+		openFile();
+		
+		floor_plan.getDocumentElement().normalize();
+		floor_nodeList = floor_plan.getElementsByTagName("floor");
+		cell_nodeList= floor_plan.getElementsByTagName("cell");
+		
+	
+		
+		for (int i=0; i < cell_nodeList.getLength(); i++){
+			
+
+				Node nodeIn = cell_nodeList.item(i);
+				Element eElementIn  =  (Element) nodeIn;
+				
+				try	{
+					//parse the element xml and add it to the list
+					results.add(ParseXML.GetSensorCellFrom(eElementIn));	
+				} catch(Exception e) {
+					System.out.println(e.getMessage());
+					
+				}
+				
+			
+		}
+		
+		return results;
+
+	}
+ 	
+ 	private static SensorCell GetSensorCellFrom(Element cellElement) {
+
+		
+		SensorCell sc = new SensorCell();
+		
+		sc.setYCoordinate(Integer.valueOf(String.valueOf(cellElement.getAttribute("ys"))).intValue());
+		sc.setXCoordinate(Integer.valueOf(String.valueOf(cellElement.getAttribute("xs"))).intValue());
+		
+		sc.setDirtAmount(Integer.valueOf(String.valueOf(cellElement.getAttribute("ds"))).intValue());
+		
+		sc.setNavigatableDataFromPathsString(String.valueOf(cellElement.getAttribute("ps")));
+		
+		sc.setFloorType(FloorType.FromInt(Integer.valueOf(String.valueOf(cellElement.getAttribute("ss")))));
+		
+		sc.setChargingStation(Boolean.valueOf(String.valueOf(cellElement.getAttribute("cs"))));
+		
+		System.out.println(sc);
+		
+		return sc;
+ 		
+ 	}
+ 	
 }
 
 
