@@ -85,15 +85,7 @@ public class CleanSweep implements INavigationObserver, INavigationChecker {
 			
 		}
 		
-		/**
-		 * This might be a good place to check/drain our power for hte move
-		 * ex: 
-		 * 
-		 * 
-		 * try {
-		 * PowerManager.UseEnergy(nextCell.getFloorType()  );
-		 * } catch()
-		 */
+
 		return canWeMoveInThisDirection;
 	}
 	

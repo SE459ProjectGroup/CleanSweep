@@ -1,4 +1,4 @@
-package powermanagement; 
+
  
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -13,19 +13,9 @@ public class PowerManagement {
   public static double btryLvl = 1000;    //full battery level charge value 
   private static boolean emptyFlag = false;  //set Empty Me indicator to OFF
 
-  private static final double btryPowerUsed = 0;   //battery power used since leaving station 
-    
-  public static final int bareFloorMoveClean = 1;   //energy cost to move and clean 
-  public static final int lowCarpetMoveClean = 2;   //energy cost to move and clean 
-  public static final int highCarpetMoveClean = 4;  //energy cost to move and clean 
-
-  public static final int bareFloorMove = 1;  //bare floor value rating 
-  public static final int lowCarpetMove = 2;  //low carpet value rating 
-  public static final int highCarpetMove = 3; //high carpet value rating   
+  private static final double btryPowerUsed = 0;   //battery power used since leaving station  
   
   private static double btryPowerLeft = 0;   //battery power remaining value 
-
-  private static double dirtSwept = 0;        //amount of dirt picked up in sweeper 
  
   public static double ss = 2;
   public static double ds = 3;
