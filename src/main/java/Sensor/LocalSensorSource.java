@@ -26,7 +26,7 @@ public class LocalSensorSource implements ISensorArray {
 	public SensorCell GetSensorDataForCoordinate(int xCoordinate,
 			int yCoordinate) {
 		for(SensorCell sc : dataFromSensor) {
-			if (sc.getxCoordinate() == xCoordinate && sc.getyCoordinate() == yCoordinate) {
+			if (sc.getXCoordinate() == xCoordinate && sc.getYCoordinate() == yCoordinate) {
 				return sc;
 			}
 		}

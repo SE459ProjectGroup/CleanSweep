@@ -62,8 +62,8 @@ public class CleanSweep implements INavigationObserver, INavigationChecker {
 		}
 		
 		//determine direction
-		int xDifference = currentCell.getxCoordinate() - nextCell.getxCoordinate();
-		int yDifference = currentCell.getyCoordinate() - nextCell.getyCoordinate();
+		int xDifference = currentCell.getXCoordinate() - nextCell.getXCoordinate();
+		int yDifference = currentCell.getYCoordinate() - nextCell.getYCoordinate();
 		
 		boolean canWeMoveInThisDirection = false;
 		

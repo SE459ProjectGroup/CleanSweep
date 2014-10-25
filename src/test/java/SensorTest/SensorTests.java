@@ -198,10 +198,10 @@ public class SensorTests {
 		
 		ISensorDataSource isds = Mockito.mock(ISensorDataSource.class);
 		List<SensorCell> cells = new ArrayList<SensorCell>() {{
-			add(new SensorCell() {{ setyCoordinate(0); setxCoordinate(0); }});
-			add(new SensorCell() {{ setyCoordinate(0); setxCoordinate(0); }});
-			add(new SensorCell() {{ setyCoordinate(0); setxCoordinate(0); }});
-			add(new SensorCell() {{ setyCoordinate(0); setxCoordinate(0); }});
+			add(new SensorCell() {{ setYCoordinate(0); setXCoordinate(0); }});
+			add(new SensorCell() {{ setYCoordinate(0); setXCoordinate(0); }});
+			add(new SensorCell() {{ setYCoordinate(0); setXCoordinate(0); }});
+			add(new SensorCell() {{ setYCoordinate(0); setXCoordinate(0); }});
 		}};
 		Mockito.when(isds.LoadAllCellsFromSource()).thenReturn(cells);
 		
@@ -218,10 +218,10 @@ public class SensorTests {
 		
 		ISensorDataSource isds = Mockito.mock(ISensorDataSource.class);
 		List<SensorCell> cells = new ArrayList<SensorCell>() {{
-			add(new SensorCell() {{ setyCoordinate(0); setxCoordinate(0); }});
-			add(new SensorCell() {{ setyCoordinate(1); setxCoordinate(0); }});
-			add(new SensorCell() {{ setyCoordinate(2); setxCoordinate(0); }});
-			add(new SensorCell() {{ setyCoordinate(3); setxCoordinate(0); }});
+			add(new SensorCell() {{ setYCoordinate(0); setXCoordinate(0); }});
+			add(new SensorCell() {{ setYCoordinate(1); setXCoordinate(0); }});
+			add(new SensorCell() {{ setYCoordinate(2); setXCoordinate(0); }});
+			add(new SensorCell() {{ setYCoordinate(3); setXCoordinate(0); }});
 		}};
 		Mockito.when(isds.LoadAllCellsFromSource()).thenReturn(cells);
 		
@@ -239,10 +239,10 @@ public class SensorTests {
 	public void TestLocalSensorDataSourceReturnsNullForCoordinateNotInDS() {
 		ISensorDataSource isds = Mockito.mock(ISensorDataSource.class);
 		List<SensorCell> cells = new ArrayList<SensorCell>() {{
-			add(new SensorCell() {{ setyCoordinate(0); setxCoordinate(0); }});
-			add(new SensorCell() {{ setyCoordinate(1); setxCoordinate(0); }});
-			add(new SensorCell() {{ setyCoordinate(2); setxCoordinate(0); }});
-			add(new SensorCell() {{ setyCoordinate(3); setxCoordinate(0); }});
+			add(new SensorCell() {{ setYCoordinate(0); setXCoordinate(0); }});
+			add(new SensorCell() {{ setYCoordinate(1); setXCoordinate(0); }});
+			add(new SensorCell() {{ setYCoordinate(2); setXCoordinate(0); }});
+			add(new SensorCell() {{ setYCoordinate(3); setXCoordinate(0); }});
 		}};
 		Mockito.when(isds.LoadAllCellsFromSource()).thenReturn(cells);
 		
@@ -259,12 +259,12 @@ public class SensorTests {
 	public void TestLocalSensorDataSourceReturnsCorrectCellForValidCoordinate() {
 		ISensorDataSource isds = Mockito.mock(ISensorDataSource.class);
 		
-		final SensorCell oneTwoCell = new SensorCell() {{ setxCoordinate(1); setyCoordinate(2); }};
+		final SensorCell oneTwoCell = new SensorCell() {{ setXCoordinate(1); setYCoordinate(2); }};
 		List<SensorCell> cells = new ArrayList<SensorCell>() {{
-			add(new SensorCell() {{ setyCoordinate(0); setxCoordinate(0); }});
-			add(new SensorCell() {{ setyCoordinate(1); setxCoordinate(0); }});
-			add(new SensorCell() {{ setyCoordinate(2); setxCoordinate(0); }});
-			add(new SensorCell() {{ setyCoordinate(3); setxCoordinate(0); }});
+			add(new SensorCell() {{ setYCoordinate(0); setXCoordinate(0); }});
+			add(new SensorCell() {{ setYCoordinate(1); setXCoordinate(0); }});
+			add(new SensorCell() {{ setYCoordinate(2); setXCoordinate(0); }});
+			add(new SensorCell() {{ setYCoordinate(3); setXCoordinate(0); }});
 			add(oneTwoCell);
 		}};
 		Mockito.when(isds.LoadAllCellsFromSource()).thenReturn(cells);

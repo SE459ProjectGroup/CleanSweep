@@ -5,21 +5,21 @@ public class SensorCell {
 	
 	private int xCoordinate;
 	
-	public int getxCoordinate() {
+	public int getXCoordinate() {
 		return xCoordinate;
 	}
 
-	public void setxCoordinate(int xCoordinate) {
+	public void setXCoordinate(int xCoordinate) {
 		this.xCoordinate = xCoordinate;
 	}
 
 	private int yCoordinate;
 	
-	public int getyCoordinate() {
+	public int getYCoordinate() {
 		return yCoordinate;
 	}
 
-	public void setyCoordinate(int yCoordinate) {
+	public void setYCoordinate(int yCoordinate) {
 		this.yCoordinate = yCoordinate;
 	}
 

@@ -387,8 +387,8 @@ public class ParseXML implements ISensorDataSource {
 		
 		SensorCell sc = new SensorCell();
 		
-		sc.setyCoordinate(Integer.valueOf(String.valueOf(cellElement.getAttribute("ys"))).intValue());
-		sc.setxCoordinate(Integer.valueOf(String.valueOf(cellElement.getAttribute("xs"))).intValue());
+		sc.setYCoordinate(Integer.valueOf(String.valueOf(cellElement.getAttribute("ys"))).intValue());
+		sc.setXCoordinate(Integer.valueOf(String.valueOf(cellElement.getAttribute("xs"))).intValue());
 		
 		sc.setDirtAmount(Integer.valueOf(String.valueOf(cellElement.getAttribute("ds"))).intValue());
 		
