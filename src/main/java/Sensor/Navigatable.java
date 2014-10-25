@@ -1,10 +1,22 @@
 package main.java.Sensor;
 
 public enum Navigatable {
-	Unknown,
-	Open,
-	Obstacle,
-	Stairs;
+	Unknown(false),
+	Open(true),
+	Obstacle(false),
+	Stairs(false);
+	
+	
+	Navigatable(boolean canNavigateTo) {
+		this.canMoveTo = canNavigateTo;
+	}
+	
+	private final boolean canMoveTo;
+	
+	public boolean CanMoveTo() {
+		return canMoveTo;
+	}
+	
 	
 	public static Navigatable FromInt(int i) {
 		switch (i) {

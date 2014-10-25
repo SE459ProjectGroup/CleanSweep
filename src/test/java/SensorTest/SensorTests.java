@@ -2,10 +2,14 @@ package test.java.SensorTest;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.validateMockitoUsage;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import main.java.Sensor.FloorType;
 import main.java.Sensor.ISensorArray;
+import main.java.Sensor.ISensorDataSource;
+import main.java.Sensor.LocalSensorSource;
 import main.java.Sensor.Navigatable;
 import main.java.Sensor.SensorCell;
 
@@ -189,7 +193,86 @@ public class SensorTests {
 		
 	}
 	
+	@Test
+	public void TestISensorDataSourceReturnsCorrectNumberOfSensorCells() {
+		
+		ISensorDataSource isds = Mockito.mock(ISensorDataSource.class);
+		List<SensorCell> cells = new ArrayList<SensorCell>() {{
+			add(new SensorCell() {{ setyCoordinate(0); setxCoordinate(0); }});
+			add(new SensorCell() {{ setyCoordinate(0); setxCoordinate(0); }});
+			add(new SensorCell() {{ setyCoordinate(0); setxCoordinate(0); }});
+			add(new SensorCell() {{ setyCoordinate(0); setxCoordinate(0); }});
+		}};
+		Mockito.when(isds.LoadAllCellsFromSource()).thenReturn(cells);
+		
+		List<SensorCell> returnedCells = isds.LoadAllCellsFromSource();
+		
+		assertTrue(cells.size() == returnedCells.size());
+		
+		Mockito.verify(isds).LoadAllCellsFromSource();
+		
+	}
 	
+	@Test
+	public void TestLocalSensorDataSourceReturnsNotNullDataForValidCoordinate() {
+		
+		ISensorDataSource isds = Mockito.mock(ISensorDataSource.class);
+		List<SensorCell> cells = new ArrayList<SensorCell>() {{
+			add(new SensorCell() {{ setyCoordinate(0); setxCoordinate(0); }});
+			add(new SensorCell() {{ setyCoordinate(1); setxCoordinate(0); }});
+			add(new SensorCell() {{ setyCoordinate(2); setxCoordinate(0); }});
+			add(new SensorCell() {{ setyCoordinate(3); setxCoordinate(0); }});
+		}};
+		Mockito.when(isds.LoadAllCellsFromSource()).thenReturn(cells);
+		
+		
+		
+		ISensorArray sensorArray = new LocalSensorSource(isds);
+		
+		
+		assertNotNull(sensorArray.GetSensorDataForCoordinate(0, 0));
+		
+		
+	}
 	
+	@Test
+	public void TestLocalSensorDataSourceReturnsNullForCoordinateNotInDS() {
+		ISensorDataSource isds = Mockito.mock(ISensorDataSource.class);
+		List<SensorCell> cells = new ArrayList<SensorCell>() {{
+			add(new SensorCell() {{ setyCoordinate(0); setxCoordinate(0); }});
+			add(new SensorCell() {{ setyCoordinate(1); setxCoordinate(0); }});
+			add(new SensorCell() {{ setyCoordinate(2); setxCoordinate(0); }});
+			add(new SensorCell() {{ setyCoordinate(3); setxCoordinate(0); }});
+		}};
+		Mockito.when(isds.LoadAllCellsFromSource()).thenReturn(cells);
+		
+		
+		
+		ISensorArray sensorArray = new LocalSensorSource(isds);
+		
+		
+		assertNull(sensorArray.GetSensorDataForCoordinate(1, 1));
+		
+	}
+	
+	@Test
+	public void TestLocalSensorDataSourceReturnsCorrectCellForValidCoordinate() {
+		ISensorDataSource isds = Mockito.mock(ISensorDataSource.class);
+		
+		final SensorCell oneTwoCell = new SensorCell() {{ setxCoordinate(1); setyCoordinate(2); }};
+		List<SensorCell> cells = new ArrayList<SensorCell>() {{
+			add(new SensorCell() {{ setyCoordinate(0); setxCoordinate(0); }});
+			add(new SensorCell() {{ setyCoordinate(1); setxCoordinate(0); }});
+			add(new SensorCell() {{ setyCoordinate(2); setxCoordinate(0); }});
+			add(new SensorCell() {{ setyCoordinate(3); setxCoordinate(0); }});
+			add(oneTwoCell);
+		}};
+		Mockito.when(isds.LoadAllCellsFromSource()).thenReturn(cells);
+		
+		ISensorArray sensorArray = new LocalSensorSource(isds);
+		
+		assertTrue(oneTwoCell.equals(sensorArray.GetSensorDataForCoordinate(1, 2)));
+		
+	}	
 	
 }
