@@ -1,5 +1,7 @@
 package main.java.Navigation;
 
+import main.java.Sensor.ISensorArray;
+
 /**
  * Interface used to expose navigation functionality to a consumer.
  * 
@@ -42,6 +44,8 @@ public interface INavigator {
 
 	void SetNavigationChecker(INavigationChecker inc);
 
+	void SetISensorArray(ISensorArray sensor);
+	
 	void addNavigationObserver(INavigationObserver observer);
 
 	void returnToOrigin();

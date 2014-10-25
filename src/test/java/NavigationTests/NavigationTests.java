@@ -3,6 +3,9 @@ package test.java.NavigationTests;
 import static org.junit.Assert.*;
 
 import main.java.Navigation.*;
+import main.java.Sensor.FloorType;
+import main.java.Sensor.ISensorArray;
+import main.java.Sensor.SensorCell;
 
 import org.junit.After;
 import org.junit.Before;
@@ -182,6 +185,12 @@ public class NavigationTests implements INavigationObserver {
 	@Test
 	public void TestNavigatorReturnsAccurateWeightedPointsToOrigin() {
 		
+		ISensorArray sa = Mockito.mock(ISensorArray.class);
+		SensorCell sc = Mockito.mock(SensorCell.class);
+		Mockito.when(sc.getFloorType()).thenReturn(FloorType.HighCarpet);
+		Mockito.when(sa.GetSensorDataForCoordinate(Mockito.anyInt(), Mockito.anyInt())).thenReturn(sc);
+		
+		toNavigate.SetISensorArray(sa);
 		Coordinate destination = new Coordinate(10,10);
 		
 		toNavigate.SetDestinationPoint(destination);
@@ -202,7 +211,7 @@ public class NavigationTests implements INavigationObserver {
 	@Override
 	public void didNavigate(Coordinate navigatedTo) {
 		
-		manualOriginWeightTracker++;
+		manualOriginWeightTracker+= FloorType.HighCarpet.GetValue();
 		
 		
 	}

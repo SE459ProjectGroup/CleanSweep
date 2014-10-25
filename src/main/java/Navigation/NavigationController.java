@@ -3,7 +3,10 @@ package main.java.Navigation;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NavigationController implements INavigator {
+import main.java.Sensor.ISensorArray;
+import main.java.Sensor.SensorCell;
+
+public class NavigationController implements INavigator, INavigationChecker {
 	
 	Coordinate currentLocation;
 	
@@ -11,7 +14,7 @@ public class NavigationController implements INavigator {
 	
 	NavigationState navState = NavigationState.Stopped;
 
-	
+	ISensorArray sensor;
 	
 	@Override
 	public boolean MoveTo(Coordinate c) {
@@ -210,11 +213,27 @@ public class NavigationController implements INavigator {
 			
 			private int weight;
 			
+			private ISensorArray sensor;
+			
+			public OriginWeightTracker(ISensorArray sensorIn) {
+				this.sensor = sensorIn;
+			}
+			
 			@Override
 			public void didNavigate(Coordinate navigatedTo) {
 				
-				weight++;
+				try	{
+					System.out.println(this.sensor);
+				SensorCell sc = this.sensor.GetSensorDataForCoordinate(navigatedTo.getX(), navigatedTo.getY());
 				
+				if (sc != null) {
+					weight += sc.getFloorType().GetValue();
+				} else {
+					weight++;
+				}
+				} catch(Exception e) {
+					System.out.println(e.getMessage());
+				}
 			}
 			
 			
@@ -232,7 +251,7 @@ public class NavigationController implements INavigator {
 		childNavigator.MoveToDestination();
 		
 		
-		OriginWeightTracker tracker = new OriginWeightTracker();
+		OriginWeightTracker tracker = new OriginWeightTracker(this.sensor);
 		
 		childNavigator.addNavigationObserver(tracker);
 		
@@ -284,5 +303,65 @@ public class NavigationController implements INavigator {
 		}
 		
 	}
+
+	public ISensorArray GetISensorArray() {
+		return this.sensor;
+	}
+	
+	public void SetISensorArray(ISensorArray sensor) {
+		this.sensor = sensor;
+	}
+
+	@Override
+	public Boolean CheckCoordinate(Coordinate coordinate) {
+		/**
+		 * Method called by the navigation controller before it navigates.
+		 * This gives the NavigationChecker(in this case the CS itself) a chance
+		 * to stop us from going down stairs or running into an obstacle.
+		 * 
+		 * This would also seem to be a good place to check the floor type and
+		 * figure out how much power we would need to go home.
+		 */
+			
+			
+			SensorCell currentCell = sensor.GetSensorDataForCoordinate(this.CurrentLocation().getX(), this.CurrentLocation().getY());
+			
+			SensorCell nextCell = sensor.GetSensorDataForCoordinate(coordinate.getX(), coordinate.getY());
+			
+			System.out.println("About to move to: " + nextCell);
+			System.out.println("From current: " + currentCell);
+			if(nextCell == null) {
+				return false;
+			}
+			
+			//determine direction
+			int xDifference = currentCell.getXCoordinate() - nextCell.getXCoordinate();
+			int yDifference = currentCell.getYCoordinate() - nextCell.getYCoordinate();
+			
+			boolean canWeMoveInThisDirection = false;
+			
+			if(xDifference > 0) {
+				//we're moving left
+				canWeMoveInThisDirection = currentCell.getLeftNavigatableType().CanMoveTo();
+				
+			} else if(xDifference < 0) {
+				//we're moving right
+				canWeMoveInThisDirection = currentCell.getRightNavigatableType().CanMoveTo();
+			} else if(yDifference > 0) {
+				//we're moving down
+				canWeMoveInThisDirection = currentCell.getBottomNavigatableType().CanMoveTo();
+			} else if(yDifference < 0) {
+				//we're moving up
+				canWeMoveInThisDirection = currentCell.getTopNavigatableType().CanMoveTo();
+			} else {
+				//we shouldnt be able to get here... throw exception?
+				
+			}
+			
+
+			return canWeMoveInThisDirection;
+
+	}
+
 	
 }

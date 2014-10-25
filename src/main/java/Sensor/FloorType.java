@@ -4,7 +4,7 @@ public enum FloorType {
 	
 	BareFloor(1),
 	LowCarpet(2),
-	HighCarpe(4);
+	HighCarpet(4);
 	
 	private final int value;
 	
@@ -13,7 +13,7 @@ public enum FloorType {
 		value = val;
 	}
 	
-	int GetValue() { return value; }
+	public int GetValue() { return value; }
 	
 	public static FloorType FromInt(int floorTypeInt) {
 		
@@ -23,7 +23,7 @@ public enum FloorType {
 			case 2:
 				return LowCarpet;
 			case 4:
-				return HighCarpe;
+				return HighCarpet;
 			default:
 				return BareFloor;
 		}
