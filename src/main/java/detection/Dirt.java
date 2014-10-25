@@ -1,6 +1,7 @@
 package main.java.detection;
 
 import main.java.Navigation.Coordinate;
+import main.java.Navigation.INavigationObserver;
 import main.java.parser.ParseXML;
 
 public class Dirt {
@@ -33,8 +34,6 @@ public class Dirt {
 		
 		return d;		
 	}
-	
-	
-	
+		
 	
 }
