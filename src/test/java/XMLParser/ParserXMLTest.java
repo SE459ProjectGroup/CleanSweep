@@ -1,9 +1,7 @@
-package main.java.Sensor.XMLParser;
+package test.java.XMLParser;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import main.java.Sensor.XMLParser.ParseXML;
 
 public class ParserXMLTest {
 	

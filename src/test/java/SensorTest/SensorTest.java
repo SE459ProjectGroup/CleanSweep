@@ -19,7 +19,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 
-public class SensorTests {
+public class SensorTest {
 
 	
 	ISensorArray sensor;

@@ -1,207 +1,221 @@
+//package powermanagement; 
 package main.java.PowerManagement;
 
-/**
- *
- * @author Joe
- */
-public class PowerManagement {
+/** 
+* 
+* @author Joe 
+*/ 
+public class PowerManagement { 
 
-    /**
-     *
-     */
-    public final static int bareFloorMove = 1;  //bare floor value rating
+	private static double maxDirtCap = 50;      //maximum dirt capacity value 
+	public static double btryLvl = 1000;    //full battery level charge value 
 
-    /**
-     *
-     */
-    public final static int lowCarpetMove = 2;  //low carpet value rating
+	private static final double btryPowerUsed = 0;   //battery power used since leaving station 
 
-    /**
-     *
-     */
-    public final static int highCarpetMove = 3; //high carpet value rating
+	//public static final int bareFloorMoveClean = 1;   //energy cost to move and clean 
+	//public static final int lowCarpetMoveClean = 2;   //energy cost to move and clean 
+	//public static final int highCarpetMoveClean = 4;  //energy cost to move and clean 
 
-    private static int maxDirtCap = 50;      //maximum dirt capacity value
-    private static int dirtSwept = 0;        //amount of dirt picked up in sweeper
-    private static double batteryLvl = 1000;    //full battery level charge value
-    private static double btryPowerLeft = 0;   //battery power remaining value
+	//public static final int bareFloorMove = 1;  //bare floor value rating 
+	//public static final int lowCarpetMove = 2;  //low carpet value rating 
+	//public static final int highCarpetMove = 3; //high carpet value rating   
 
-    /**
-     *
-     */
-    public final static int bareFloorMoveClean = 1;   //energy cost to move and clean
+	private static double btryPowerLeft = 0;   //battery power remaining value 
 
-    /**
-     *
-     */
-    public final static int lowCarpetMoveClean = 2;   //energy cost to move and clean
+	private static double dirtSwept = 0;        //amount of dirt picked up in sweeper 
 
-    /**
-     *
-     */
-    public final static int highCarpetMoveClean = 4;  //energy cost to move and clean
+	//temporary TEST Values
+	public static double currentCell = 2;
+	public static double nextCell =  3;
 
-    /**
-     *
-     * @param ss
-     * @param ds
-     * @return
-     */
-    public static double usePower(int ss, int ds) {
-        System.out.println("The usePower method has started\n");
-        System.out.println("The ss value is = " + ss);
-        System.out.println("The ds value is = " + ds);
+	public static double charge;  //computed cost to move and clean an area
 
-        double charge, locA_ss, locB_ss;
+	/** 
+	* Computes the amount of power that the moving and cleaning will require for
+	* the location
+	* @return 
+	*/ 
+	public static double moveCost() {
+		System.out.println("The moveCost method has started\n"); 
+		System.out.println("The currentCell value is = " + currentCell); 
+		System.out.println("The nextCell value is = " + nextCell); 
+	//	System.out.println("The cleanCost value is = " + dirtSensor); 		
 
-        locA_ss = ss;
-        locB_ss = ds;
+		//locA_ss is the MOVE-FROM coordinate
+		//locB_ss is the MOVE-TO coordinate
+        	double locA_ss, locB_ss, cleanCost;
 
-        charge = (locA_ss + locB_ss) / 2;
+		locA_ss = currentCell;
+		locB_ss = nextCell;
+///		cleanCost = dirtSensor;
 
-        System.out.println("The charge value is = " + charge);
-        System.out.println("The usePower method has ended\n");
+	//	charge = ((locA_ss + locB_ss) / 2) + cleanCost;
+		System.out.println("The charge value is = " + charge); 
+		System.out.println("The moveCost method has ended\n"); 
 
-        return charge;
-    }
+		return charge; 
+	} 
 
-    /**
-     *
-     * @param charge
-     * @return
-     */
-    public static double powerRemain(double charge) {
-        System.out.println("The powerRemain method has started\n");
-        System.out.println("The charge value is = " + charge);
-        System.out.println("The IN btryPowerLeft value is = " + getBtryPowerLeft());
+	public static void chargeStation() {
+		setDirtSwept(0);   	 //Sets dirt swept to 0
+		setBtryPowerLeft(1000);   //Sets battery power to max
+	}
+	
+	public static double powerRemain() { 
+		btryPowerLeft -= charge; 
+		return btryPowerLeft; 
+	} 
 
-        setBtryPowerLeft(getBtryPowerLeft() - charge);
+	private static void atChargeStation() { 
+		resetSweep();
+	} 
 
-        System.out.println("The OUT btryPowerLeft value is = " + getBtryPowerLeft());
-        System.out.println("The powerRemain method has ended\n");
+	public static double moveCostHome() {
+		System.out.println("The moveCostHome method has started\n"); 
+		System.out.println("The currentCell value is = " + currentCell); 
+		System.out.println("The nextCell value is = " + nextCell); 
 
-        return getBtryPowerLeft();
-    }
+		//locA_ss is the MOVE-FROM coordinate
+		//locB_ss is the MOVE-TO coordinate
+        	double locA_ss, locB_ss;
 
-    /**
-     *
-     * @param charge
-     * @param btryPowerLeft
-     * @return
-     */
-    public static double batteryLevel(double charge, int btryPowerLeft) {
-        System.out.println("The batteryLevel method has started\n");
-        System.out.println("The charge value is = " + charge);
-        System.out.println("The btryPowerLeft value is = " + btryPowerLeft);
+		locA_ss = currentCell;
+		locB_ss = nextCell;
 
-        double btryLeft, inCharge;
+		charge = (locA_ss + locB_ss) / 2;
+		System.out.println("The charge value is = " + charge); 
+		System.out.println("The moveCostHome method has ended\n"); 
 
-        btryLeft = btryPowerLeft;
-        inCharge = charge;
+		return charge; 
+	} 
+	
+	/** 
+	* 
+	*/ 
+	public static void return2Charger() {
+		System.out.println("The return2Charger method has started\n"); 
 
-        btryLeft -= inCharge;
+		System.out.println("WILL NEED TO HAVE NAVIGATION PATH TO GET BACK TO CHARGING STATION"); 
 
-        System.out.println("The btryLeft value is = " + btryLeft);
-        System.out.println("The batteryLevel method has ended\n");
+		System.out.println("The return2Charger method has ended\n"); 
+	} 
 
-        return btryLeft;
-    }
+	public static void powerCheck() {
+		if (dirtSwept == maxDirtCap || (btryPowerUsed >= btryPowerLeft)) { 
+			return2Charger(); 
+		}
 
-    /**
-     *
-     * @param btryPowerLeft
-     * @param dirtSwept
-     */
-    public static void chargerReturn(int btryPowerLeft, int dirtSwept) {
-        System.out.println("The chargerReturn method has started\n");
+		if (dirtSwept < maxDirtCap || (btryPowerUsed < btryPowerLeft)) {
+				
+		}	
+	}
 
-        System.out.println("The btryPowerLeft value is = " + btryPowerLeft);
-        System.out.println("The dirtSwept value is = " + dirtSwept);
+	private static void resetSweep() {
+		emptyFlag();
 
-        if (dirtSwept == 50) {
-            backToChargeStation();
-        }
+		setDirtSwept(0);    //resets dirt swept to 0
+		setBtryPowerLeft(1000);   //resets remaining battery power to max
 
-        System.out.println("The chargerReturn method has ended\n");
-    }
+		resetFlag();
+	}
 
-    private static void backToChargeStation() {
-        System.out.println("The backToChargeStation method is started\n");
+	 /**
+	 *
+	 */
+	public static void chargeStationCheck() {
+		System.out.println("The chargestationCheck method has started\n");
 
-        System.out.println("The backToChargeStation method is ended\n");
-    }
+		int cs = 0;
+		int CScount = 0;
 
-    /**
-     *
-     */
-    public static void activityLog() {
-        System.out.println("The activityLog method has started\n");
+		if (cs == '1') {
+			CScount++;      //tracks the number of charging stations
+			chargeStation();
+		}
 
-        System.out.println("The activityLog method has ended\n");
-    }
+		//if SECOND or MORE charging stations are detected, those locations 
+		//are stored in a 2-D array and are sorted with the CLOSEST location
+		//to the sweeper being in the FIRST position 
+		if (CScount > '1') {
+			System.out.println("The chargestationCheck method has ended\n");
+		}
+	}
 
-    /**
-     *
-     */
-    public static void layoutFiles() {
-        System.out.println("The layoutFiles method has started\n");
+	private static void emptyFlag(){ 
+		System.out.println("\nEMPTY ME!!\n");
+	}
+	
+	private static void resetFlag(){
+		System.out.println("\nThe Dirt Contents -->" + getDirtSwept());
+		System.out.println("The Battery Power Left --> " + getBtryPowerLeft());
+	}
 
-        System.out.println("The layoutFiles method has ended\n");
-    }
+	/** 
+	* @return the maxDirtCap 
+	*/ 
+	public static double getMaxDirtCap() { 
+		return maxDirtCap; 
+	} 
 
-    /**
-     * @return the maxDirtCap
-     */
-    public static int getMaxDirtCap() {
-        return maxDirtCap;
-    }
+	/** 
+	* @param aMaxDirtCap the maxDirtCap to set 
+	*/ 
+	public static void setMaxDirtCap(int aMaxDirtCap) { 
+		maxDirtCap = aMaxDirtCap; 
+	} 
 
-    /**
-     * @param aMaxDirtCap the maxDirtCap to set
-     */
-    public static void setMaxDirtCap(int aMaxDirtCap) {
-        maxDirtCap = aMaxDirtCap;
-    }
+	 /** 
+	  * @return the dirtSwept 
+	  */ 
+	 public static double getDirtSwept() { 
+		 return dirtSwept; 
+	 } 
 
-    /**
-     * @return the dirtSwept
-     */
-    public static int getDirtSwept() {
-        return dirtSwept;
-    }
+	 /** 
+	  * @param aDirtSwept the dirtSwept to set 
+	  */ 
+	 public static void setDirtSwept(int aDirtSwept) { 
+		 dirtSwept = aDirtSwept; 
+	 } 
 
-    /**
-     * @param aDirtSwept the dirtSwept to set
-     */
-    public static void setDirtSwept(int aDirtSwept) {
-        dirtSwept = aDirtSwept;
-    }
+	 /** 
+	  * @return the batteryLvl 
+	  */ 
+	 public static double getBatteryLvl() { 
+		 return btryLvl; 
+	 } 
 
-    /**
-     * @return the batteryLvl
-     */
-    public static double getBatteryLvl() {
-        return batteryLvl;
-    }
+	 /** 
+	  * @param aBatteryLvl the batteryLvl to set 
+	  */ 
+	 public static void setBatteryLvl(double aBatteryLvl) { 
+		 btryLvl = aBatteryLvl; 
+	 } 
 
-    /**
-     * @param aBatteryLvl the batteryLvl to set
-     */
-    public static void setBatteryLvl(double aBatteryLvl) {
-        batteryLvl = aBatteryLvl;
-    }
+	 /** 
+	  * @return the btryPowerLeft 
+	  */ 
+	 public static double getBtryPowerLeft() { 
+		 return btryPowerLeft; 
+	 } 
 
-    /**
-     * @return the btryPowerLeft
-     */
-    public static double getBtryPowerLeft() {
-        return btryPowerLeft;
-    }
+	 /** 
+	  * @param aBtryPowerLeft the btryPowerLeft to set 
+	  */ 
+	 public static void setBtryPowerLeft(double aBtryPowerLeft) { 
+		 btryPowerLeft = aBtryPowerLeft; 
+	 } 
 
-    /**
-     * @param aBtryPowerLeft the btryPowerLeft to set
-     */
-    public static void setBtryPowerLeft(double aBtryPowerLeft) {
-        btryPowerLeft = aBtryPowerLeft;
-    }
+	/**
+	 * @param args the command line arguments
+	 */
+/*	public static void main(String[] args) {
+		// TODO code application logic here
+	chargeStation();
+	return2Charger();
+	moveCost();
+	powerRemain();
+	atChargeStation();
+
+	}*/
 }

@@ -11,7 +11,7 @@ import org.mockito.Mockito;
 
 import static org.mockito.Mockito.*;
 
-public class NavigationTests implements INavigationObserver {
+public class NavigationTest implements INavigationObserver {
 
 	
 	private INavigator toNavigate;
