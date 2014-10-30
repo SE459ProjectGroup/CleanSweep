@@ -1,12 +1,7 @@
 package main.java.detection;
 
 import main.java.Navigation.Coordinate;
-<<<<<<< HEAD
-import main.java.Navigation.INavigationObserver;
-import main.java.parser.ParseXML;
-=======
 import main.java.Sensor.XMLParser.ParseXML;
->>>>>>> 6ca3d3c58c91b143f50c820b994ee17591532bdf
 
 public class Dirt {
 	int dirt;

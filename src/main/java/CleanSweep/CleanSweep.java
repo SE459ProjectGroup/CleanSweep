@@ -1,6 +1,7 @@
 package main.java.CleanSweep;
 
 import main.java.Navigation.*;
+import main.java.PowerManagement.IPowerManager;
 import main.java.Sensor.ISensorArray;
 import main.java.Sensor.LocalSensorSource;
 import main.java.Sensor.SensorCell;
@@ -10,6 +11,8 @@ public class CleanSweep implements INavigationObserver, INavigationChecker {
 	private INavigator navigationController;
 	
 	private ISensorArray sensor;
+	
+	private IPowerManager power;
 	
 	public CleanSweep() {
 		//create the navigation controller
@@ -38,7 +41,15 @@ public class CleanSweep implements INavigationObserver, INavigationChecker {
 		
 		//ex: dirtCollection.CollectDirt(currentCellInfo)
 		// or dirtCollection.CollectDirt(currentCellInfo.getDirtAmount(), currentCellInfo.getFloorType());
-	
+		
+		while(currentCellInfo.getDirtAmount() > 0) {
+			int currentBatteryLife = power.GetBatteryLevel();
+			if(currentCellInfo.getFloorType().GetValue() < currentBatteryLife) {
+				
+				
+			}
+			
+		}
 	}
 
 	/**

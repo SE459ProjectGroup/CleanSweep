@@ -13,7 +13,7 @@ public enum FloorType {
 		value = val;
 	}
 	
-	int GetValue() { return value; }
+	public int GetValue() { return value; }
 	
 	public static FloorType FromInt(int floorTypeInt) {
 		
