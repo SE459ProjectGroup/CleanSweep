@@ -46,10 +46,12 @@ public interface INavigator {
 
 	void returnToOrigin();
 
-	int GetWeightedCostToOrigin();
+	//int GetWeightedCostToOrigin();
 
 	void roam(int i);
 
 	Coordinate PreviousLocation();
 
+	NavigationState CurrentNavigationState();
+	
 }

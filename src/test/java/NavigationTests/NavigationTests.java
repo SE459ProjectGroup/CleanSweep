@@ -179,23 +179,23 @@ public class NavigationTests implements INavigationObserver {
 	
 	
 	
-	@Test
-	public void TestNavigatorReturnsAccurateWeightedPointsToOrigin() {
-		
-		Coordinate destination = new Coordinate(10,10);
-		
-		toNavigate.SetDestinationPoint(destination);
-		
-		toNavigate.MoveToDestination();
-		
-		toNavigate.addNavigationObserver(this);
-		
-		int weightedToHome = toNavigate.GetWeightedCostToOrigin();
-		
-		toNavigate.returnToOrigin();
-		
-		assertTrue(this.manualOriginWeightTracker == weightedToHome);
-	}
+//	@Test
+//	public void TestNavigatorReturnsAccurateWeightedPointsToOrigin() {
+//		
+//		Coordinate destination = new Coordinate(10,10);
+//		
+//		toNavigate.SetDestinationPoint(destination);
+//		
+//		toNavigate.MoveToDestination();
+//		
+//		toNavigate.addNavigationObserver(this);
+//		
+//		int weightedToHome = toNavigate.GetWeightedCostToOrigin();
+//		
+//		toNavigate.returnToOrigin();
+//		
+//		assertTrue(this.manualOriginWeightTracker == weightedToHome);
+//	}
 
 	private int manualOriginWeightTracker;
 	

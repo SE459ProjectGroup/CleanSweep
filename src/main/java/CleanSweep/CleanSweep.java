@@ -1,7 +1,9 @@
 package main.java.CleanSweep;
 
+import main.java.DirtCollection.DirtCollection;
 import main.java.Navigation.*;
 import main.java.PowerManagement.IPowerManager;
+import main.java.PowerManagement.TempPowerManager;
 import main.java.Sensor.ISensorArray;
 import main.java.Sensor.LocalSensorSource;
 import main.java.Sensor.SensorCell;
@@ -14,6 +16,8 @@ public class CleanSweep implements INavigationObserver, INavigationChecker {
 	
 	private IPowerManager power;
 	
+	private DirtCollection dirtCollection;
+	
 	public CleanSweep() {
 		//create the navigation controller
 		navigationController = new NavigationController();
@@ -25,8 +29,19 @@ public class CleanSweep implements INavigationObserver, INavigationChecker {
 		//create the sensor
 		sensor = new LocalSensorSource();
 
+		//create the power management object
+		power = new TempPowerManager();
+		
+		//create dirt collection
+		dirtCollection = new DirtCollection();
+		
 		//roam around the area for 10 spaces
-		navigationController.roam(10);
+		for (int i = 0; i < 10; i++) {
+			navigationController.roam(10);
+		}
+		
+
+		
 	}
 
 
@@ -37,16 +52,37 @@ public class CleanSweep implements INavigationObserver, INavigationChecker {
 		SensorCell currentCellInfo = sensor.GetSensorDataForCoordinate(navigatedTo.getX(), navigatedTo.getY()); 
 		
 		//we know where we are and can call dirt collection, get data, resolve battery life
-		System.out.println(currentCellInfo);
-		
+		System.out.println("====================================");
+		System.out.println("CS has moved to " + currentCellInfo.getXCoordinate() + ", " + currentCellInfo.getYCoordinate());
+		System.out.println("Current Battery Life: " + power.GetBatteryLevel());
+		System.out.println("Current Dirt: " + dirtCollection.getCurrentDirt());
+		System.out.println("Current Navigation State: " + navigationController.CurrentNavigationState());
+		System.out.println("Current Weighted Cost to home: " + this.GetWeightedCostToOrigin());
+		System.out.println("====================================");
 		//ex: dirtCollection.CollectDirt(currentCellInfo)
 		// or dirtCollection.CollectDirt(currentCellInfo.getDirtAmount(), currentCellInfo.getFloorType());
 		
-		while(currentCellInfo.getDirtAmount() > 0) {
-			int currentBatteryLife = power.GetBatteryLevel();
-			if(currentCellInfo.getFloorType().GetValue() < currentBatteryLife) {
+		while(currentCellInfo.getDirtAmount() > 0 && navigationController.CurrentNavigationState() != NavigationState.ReturningToOrgin) {
+			double costToHome = this.GetWeightedCostToOrigin();
+			double currentBatteryLife = power.GetBatteryLevel();
+			double batteryLifeAfterDirtCollection = currentBatteryLife - currentCellInfo.getFloorType().GetValue();
+			double batteryLifeAfterNavigatingToHome = batteryLifeAfterDirtCollection - costToHome;
+			
+			if(batteryLifeAfterNavigatingToHome > 0) {
 				
+				//proceed with dirt collection
+				dirtCollection.collectDirt();
+				currentCellInfo.setDirtAmount(currentCellInfo.getDirtAmount() - 1);
 				
+				if(power.RequestEnergy(currentCellInfo.getFloorType().GetValue()) == false) {
+					throw new RuntimeException("We've run out of battery life!");
+				}
+			} else {
+				
+				//we don't have power to collect this dirt.
+				this.navigationController.returnToOrigin();
+				//we definetely need to exit, should we also
+				break;
 			}
 			
 		}
@@ -96,8 +132,77 @@ public class CleanSweep implements INavigationObserver, INavigationChecker {
 			
 		}
 		
+		//now calculate power cost of the move
+		double nextMoveNavCost = (currentCell.getFloorType().GetValue()  + nextCell.getFloorType().GetValue()) * .5;
+		
+		if (navigationController.CurrentNavigationState() != NavigationState.ReturningToOrgin) {
+
+			//this probably works but depends upon navigation to move back to the current space to be accurate
+			double batteryLifeNeededToGetHomeFromNextSquare = this.GetWeightedCostToOrigin() + nextMoveNavCost; 
+			
+			if ((power.GetBatteryLevel() - nextMoveNavCost) <= batteryLifeNeededToGetHomeFromNextSquare) {
+				navigationController.returnToOrigin();
+				return false;
+				
+			}
+		}
+		
+		if(canWeMoveInThisDirection) {
+			
+			if(power.RequestEnergy(nextMoveNavCost) == false) {
+				throw new RuntimeException("We've run out of battery life!");
+			}
+		}
 
 		return canWeMoveInThisDirection;
+	}
+
+
+	@Override
+	public int GetWeightedCostToOrigin() {
+		
+		
+		class OriginWeightTracker implements INavigationObserver {
+			
+			private int weight;
+			
+			@Override
+			public void didNavigate(Coordinate navigatedTo) {
+				
+				try	{
+					//weight++;
+					SensorCell sc = sensor.GetSensorDataForCoordinate(navigatedTo.getX(), navigatedTo.getY());
+					System.out.println("Adding " + sc.getXCoordinate() + ", " + sc.getYCoordinate() + " " + sc.getFloorType() + " CW: " + weight);
+					weight += sc.getFloorType().GetValue();
+					System.out.println("Current Weight after add: " + weight);
+				} catch(Exception e) {
+					
+				}
+				
+			}
+			
+			
+			public int getTrackedWeight() {
+				System.out.println("Returning Weight: " + weight);
+				return weight;
+				
+			}
+			
+		}
+		
+		INavigator childNavigator = new NavigationController();
+		
+		childNavigator.SetDestinationPoint(navigationController.CurrentLocation());
+		childNavigator.MoveToDestination();
+		
+		
+		OriginWeightTracker tracker = new OriginWeightTracker();
+		
+		childNavigator.addNavigationObserver(tracker);
+		
+		childNavigator.returnToOrigin();
+		
+		return tracker.getTrackedWeight();
 	}
 	
 	

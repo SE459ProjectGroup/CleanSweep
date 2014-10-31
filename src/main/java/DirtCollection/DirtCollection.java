@@ -1,6 +1,5 @@
 package main.java.DirtCollection;
-
-import main.java.Navigation.Coordinate;
+ 
 
 public class DirtCollection {
 	
