@@ -229,5 +229,67 @@ public class NavigationTests implements INavigationObserver {
 		
 	}
 	
+	@Test
+	public void TestNavigatorStopsRoamingWhenInstructedToReturnToOrigin() {
+		
+		class RoamingObserver implements INavigationObserver {
+
+			
+			public int roamedCoordinates = 0;
+			
+			public final int stopAfterCount = 10;
+			
+			@Override
+			public void didNavigate(Coordinate navigatedTo) {
+				if (toNavigate.CurrentNavigationState() != NavigationState.ReturningToOrgin) roamedCoordinates++;
+				
+				if (roamedCoordinates >= stopAfterCount) {
+					toNavigate.returnToOrigin();
+				}
+			}
+			
+			
+		}
+		
+		RoamingObserver ro = new RoamingObserver();
+		toNavigate.addNavigationObserver(ro);
+		
+		toNavigate.roam(20);
+		
+		assertTrue(ro.roamedCoordinates == ro.stopAfterCount);
+		
+	}
 	
+	
+	@Test
+	public void TestNavigatorReturnsToHomeAndStopsWhenInstructed() {
+		
+		class OriginObserver implements INavigationObserver {
+
+			int returnAfterCount = 10;
+			
+			int spacesNavigated = 0;
+			
+			@Override
+			public void didNavigate(Coordinate navigatedTo) {
+				spacesNavigated++;
+				
+				if (spacesNavigated >= returnAfterCount) {
+					
+					toNavigate.returnToOrigin();
+				}
+				
+				
+			}
+			
+			
+		}
+		
+		toNavigate.addNavigationObserver(new OriginObserver());
+		
+		toNavigate.roam(20);
+		
+		assertTrue(toNavigate.CurrentLocation().equals(new Coordinate(0,0)));
+		
+	}
 }

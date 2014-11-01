@@ -151,8 +151,12 @@ public class NavigationController implements INavigator {
 			}
 			
 		}
+		if (this.navState == NavigationState.Navigating) {
+			
+			this.navState = NavigationState.Stopped;
+			
+		}
 		
-		this.navState = NavigationState.Stopped;
 		
 	}
 
@@ -206,6 +210,7 @@ public class NavigationController implements INavigator {
 		
 		this.MoveToDestination();
 		
+		
 	}
 
 	@Override
@@ -215,7 +220,9 @@ public class NavigationController implements INavigator {
 		List<Coordinate> possibleMoves = null;
 		boolean didMove;
 		
-		for(int i = 0; i < count; i++) {
+		this.navState = NavigationState.Navigating;
+		
+		for(int i = 0; (i < count && this.navState != NavigationState.ReturningToOrgin ); i++) {
 			didMove = false;
 			//load the next possible moves
 			possibleMoves = new ArrayList<Coordinate>() {{
@@ -234,12 +241,20 @@ public class NavigationController implements INavigator {
 				
 			}
 			
-			for(Coordinate test : possibleMoves) {
-				if(this.MoveTo(test)) {
-					didMove = true;
-					break;
+			try {
+				
+				for(Coordinate test : possibleMoves) {
+					if(this.MoveTo(test)) {
+						didMove = true;
+						break;
+					}
 				}
+				
+			} catch(RuntimeException re) {
+				// MoveTo throws a runtime exception when it returns to the origin
+				break;
 			}
+			
 			
 			if (didMove == false) {
 				//we couldnt move to any of the possible moves, back it up!
@@ -247,6 +262,8 @@ public class NavigationController implements INavigator {
 				
 			}
 		}
+		
+		this.navState = NavigationState.Stopped;
 		
 	}
 	
