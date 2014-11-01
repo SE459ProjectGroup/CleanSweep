@@ -1,8 +1,6 @@
 package main.java.detection;
 
 import main.java.Navigation.Coordinate;
-
-
 import main.java.Sensor.XMLParser.ParseXML;
 
 

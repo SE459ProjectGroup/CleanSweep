@@ -96,9 +96,15 @@ public class NavigationController implements INavigator {
 	public void MoveToDestination() {
 		
 		int xDelta, yDelta;
-		this.navState = NavigationState.Navigating;
 		
-		while (this.navState == NavigationState.Navigating && this.CurrentLocation().equals(this.GetDestinationPoint()) == false) {
+		if (this.navState == NavigationState.Stopped) {
+			
+			this.navState = NavigationState.Navigating;
+			
+		}
+		
+		
+		while ((this.navState == NavigationState.Navigating || this.navState == NavigationState.ReturningToOrgin)&& this.CurrentLocation().equals(this.GetDestinationPoint()) == false) {
 			xDelta = this.CurrentLocation().getX() - this.GetDestinationPoint().getX();
 			yDelta = this.CurrentLocation().getY() - this.GetDestinationPoint().getY();
 			if (xDelta != 0 ) {
@@ -145,8 +151,12 @@ public class NavigationController implements INavigator {
 			}
 			
 		}
+		if (this.navState == NavigationState.Navigating) {
+			
+			this.navState = NavigationState.Stopped;
+			
+		}
 		
-		this.navState = NavigationState.Stopped;
 		
 	}
 
@@ -194,54 +204,14 @@ public class NavigationController implements INavigator {
 	@Override
 	public void returnToOrigin() {
 		
+		this.navState = NavigationState.ReturningToOrgin;
+		
 		this.SetDestinationPoint(new Coordinate(0,0));
 		
 		this.MoveToDestination();
 		
+		
 	}
-
-
-
-	@Override
-	public int GetWeightedCostToOrigin() {
-		
-		
-		class OriginWeightTracker implements INavigationObserver {
-			
-			private int weight;
-			
-			@Override
-			public void didNavigate(Coordinate navigatedTo) {
-				
-				weight++;
-				
-			}
-			
-			
-			public int getTrackedWeight() {
-				
-				return weight;
-				
-			}
-			
-		}
-		
-		INavigator childNavigator = new NavigationController();
-		
-		childNavigator.SetDestinationPoint(this.CurrentLocation());
-		childNavigator.MoveToDestination();
-		
-		
-		OriginWeightTracker tracker = new OriginWeightTracker();
-		
-		childNavigator.addNavigationObserver(tracker);
-		
-		childNavigator.returnToOrigin();
-		
-		return tracker.getTrackedWeight();
-	}
-
-
 
 	@Override
 	public void roam(int count) {
@@ -250,7 +220,9 @@ public class NavigationController implements INavigator {
 		List<Coordinate> possibleMoves = null;
 		boolean didMove;
 		
-		for(int i = 0; i < count; i++) {
+		this.navState = NavigationState.Navigating;
+		
+		for(int i = 0; (i < count && this.navState != NavigationState.ReturningToOrgin ); i++) {
 			didMove = false;
 			//load the next possible moves
 			possibleMoves = new ArrayList<Coordinate>() {{
@@ -269,12 +241,20 @@ public class NavigationController implements INavigator {
 				
 			}
 			
-			for(Coordinate test : possibleMoves) {
-				if(this.MoveTo(test)) {
-					didMove = true;
-					break;
+			try {
+				
+				for(Coordinate test : possibleMoves) {
+					if(this.MoveTo(test)) {
+						didMove = true;
+						break;
+					}
 				}
+				
+			} catch(RuntimeException re) {
+				// MoveTo throws a runtime exception when it returns to the origin
+				break;
 			}
+			
 			
 			if (didMove == false) {
 				//we couldnt move to any of the possible moves, back it up!
@@ -283,6 +263,13 @@ public class NavigationController implements INavigator {
 			}
 		}
 		
+		this.navState = NavigationState.Stopped;
+		
 	}
 	
+	
+	@Override
+	public NavigationState CurrentNavigationState() {
+		return this.navState;
+	}
 }

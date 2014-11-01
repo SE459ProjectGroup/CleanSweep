@@ -396,7 +396,7 @@ public class ParseXML implements ISensorDataSource {
 		
 		sc.setFloorType(FloorType.FromInt(Integer.valueOf(String.valueOf(cellElement.getAttribute("ss")))));
 		
-		sc.setChargingStation(Boolean.valueOf(String.valueOf(cellElement.getAttribute("cs"))));
+		sc.setChargingStation(Boolean.valueOf(String.valueOf(cellElement.getAttribute("cs").equals("1"))));
 		
 		System.out.println(sc);
 		

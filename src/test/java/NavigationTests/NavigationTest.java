@@ -179,23 +179,23 @@ public class NavigationTest implements INavigationObserver {
 	
 	
 	
-	@Test
-	public void TestNavigatorReturnsAccurateWeightedPointsToOrigin() {
-		
-		Coordinate destination = new Coordinate(10,10);
-		
-		toNavigate.SetDestinationPoint(destination);
-		
-		toNavigate.MoveToDestination();
-		
-		toNavigate.addNavigationObserver(this);
-		
-		int weightedToHome = toNavigate.GetWeightedCostToOrigin();
-		
-		toNavigate.returnToOrigin();
-		
-		assertTrue(this.manualOriginWeightTracker == weightedToHome);
-	}
+//	@Test
+//	public void TestNavigatorReturnsAccurateWeightedPointsToOrigin() {
+//		
+//		Coordinate destination = new Coordinate(10,10);
+//		
+//		toNavigate.SetDestinationPoint(destination);
+//		
+//		toNavigate.MoveToDestination();
+//		
+//		toNavigate.addNavigationObserver(this);
+//		
+//		int weightedToHome = toNavigate.GetWeightedCostToOrigin();
+//		
+//		toNavigate.returnToOrigin();
+//		
+//		assertTrue(this.manualOriginWeightTracker == weightedToHome);
+//	}
 
 	private int manualOriginWeightTracker;
 	
@@ -229,5 +229,67 @@ public class NavigationTest implements INavigationObserver {
 		
 	}
 	
+	@Test
+	public void TestNavigatorStopsRoamingWhenInstructedToReturnToOrigin() {
+		
+		class RoamingObserver implements INavigationObserver {
+
+			
+			public int roamedCoordinates = 0;
+			
+			public final int stopAfterCount = 10;
+			
+			@Override
+			public void didNavigate(Coordinate navigatedTo) {
+				if (toNavigate.CurrentNavigationState() != NavigationState.ReturningToOrgin) roamedCoordinates++;
+				
+				if (roamedCoordinates >= stopAfterCount) {
+					toNavigate.returnToOrigin();
+				}
+			}
+			
+			
+		}
+		
+		RoamingObserver ro = new RoamingObserver();
+		toNavigate.addNavigationObserver(ro);
+		
+		toNavigate.roam(20);
+		
+		assertTrue(ro.roamedCoordinates == ro.stopAfterCount);
+		
+	}
 	
+	
+	@Test
+	public void TestNavigatorReturnsToHomeAndStopsWhenInstructed() {
+		
+		class OriginObserver implements INavigationObserver {
+
+			int returnAfterCount = 10;
+			
+			int spacesNavigated = 0;
+			
+			@Override
+			public void didNavigate(Coordinate navigatedTo) {
+				spacesNavigated++;
+				
+				if (spacesNavigated >= returnAfterCount) {
+					
+					toNavigate.returnToOrigin();
+				}
+				
+				
+			}
+			
+			
+		}
+		
+		toNavigate.addNavigationObserver(new OriginObserver());
+		
+		toNavigate.roam(20);
+		
+		assertTrue(toNavigate.CurrentLocation().equals(new Coordinate(0,0)));
+		
+	}
 }

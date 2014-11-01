@@ -79,7 +79,7 @@ public class SensorTest {
 	public void TestISensorReturnsCorrectDirtAmount() {
 		final int testAmount = 10;
 		Mockito.when(sensor.GetSensorDataForCoordinate(1, 0)).thenReturn(new SensorCell() {{
-			setFloorType(FloorType.HighCarpe);
+			setFloorType(FloorType.HighCarpet);
 			setDirtAmount(testAmount);
 		}});
 		
@@ -93,7 +93,7 @@ public class SensorTest {
 	@Test
 	public void TestISensorReturnsCorrectPathsData() {
 		Mockito.when(sensor.GetSensorDataForCoordinate(1, 0)).thenReturn(new SensorCell() {{
-			setFloorType(FloorType.HighCarpe);
+			setFloorType(FloorType.HighCarpet);
 			setDirtAmount(1);
 			setRightNavigatableType(Navigatable.Open);
 			setLeftNavigatableType(Navigatable.Stairs);
