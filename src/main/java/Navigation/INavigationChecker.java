@@ -4,5 +4,5 @@ public interface INavigationChecker {
 
 	Boolean CheckCoordinate(Coordinate coordinate);
 
-	int GetWeightedCostToOrigin();
+	int GetWeightedCostToOrigin(Coordinate fromCoordinate);
 }

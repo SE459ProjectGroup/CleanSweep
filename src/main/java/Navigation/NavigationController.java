@@ -15,7 +15,7 @@ public class NavigationController implements INavigator {
 	
 	@Override
 	public boolean MoveTo(Coordinate c) {
-		System.out.println("MoveTo: Moving to " + c.toString() + " from " + this.CurrentLocation());
+		//System.out.println("MoveTo: Moving to " + c.toString() + " from " + this.CurrentLocation());
 		int difX = Math.abs(c.getX() - this.currentLocation.getX());
 		int difY = Math.abs(c.getY() - this.currentLocation.getY());
 		if ((difX + difY) > 1 ) {
@@ -26,11 +26,11 @@ public class NavigationController implements INavigator {
 			
 			boolean res = this.navChecker.CheckCoordinate(c);
 			if(res == false) { 
-				System.out.println("MoveTo: Cannot Move To Location");
+				//System.out.println("MoveTo: Cannot Move To Location");
 				return false; 
 			}
 		}
-		System.out.println("MoveTo: Moving to accepted");
+		//System.out.println("MoveTo: Moving to accepted");
 		this.previousLocation = this.currentLocation;
 		this.currentLocation = c;
 		
@@ -110,20 +110,33 @@ public class NavigationController implements INavigator {
 			if (xDelta != 0 ) {
 				
 				if(this.MoveTo(new Coordinate(this.CurrentLocation().getX() + ((xDelta > 0)? -1:1) ,this.CurrentLocation().getY())) == false) {
-					//we couldnt move horizontally.
-					int movedUpCount = 0;
-					boolean movedHorizontally = false;
-					boolean failedToMoveVertically = false;
-					while(movedUpCount < 5 && movedHorizontally == false && failedToMoveVertically == false) {
-						if(this.MoveTo(new Coordinate(this.CurrentLocation().getX(), this.CurrentLocation().getY() + 1))) {
-							movedUpCount++;
-							movedHorizontally = this.MoveTo(new Coordinate(this.CurrentLocation().getX() + ((xDelta > 0)? -1:1) , this.CurrentLocation().getY()));
-						} else {
+					
+					if (Math.abs(yDelta) > 0 && this.MoveTo(new Coordinate(this.CurrentLocation().getX(),this.CurrentLocation().getY()  + ((yDelta > 0)? -1:1) )) == true) {
+						//we cant move horizontally, so let's try to get correct vertically and we can try again
+
+					} else {
+						
+						//we couldnt move horizontally.
+						int movedUpCount = 0;
+						boolean movedHorizontally = false;
+						boolean failedToMoveVertically = false;
+						while(movedUpCount < 5 && movedHorizontally == false && failedToMoveVertically == false) {
 							
-							failedToMoveVertically = true;
+							//if our destination point is lower, 
 							
+							if(this.MoveTo(new Coordinate(this.CurrentLocation().getX(), this.CurrentLocation().getY() + 1))) {
+								movedUpCount++;
+								movedHorizontally = this.MoveTo(new Coordinate(this.CurrentLocation().getX() + ((xDelta > 0)? -1:1) , this.CurrentLocation().getY()));
+							} else {
+								
+								failedToMoveVertically = true;
+								
+							}
 						}
+						
 					}
+					
+					
 				}
 				
 			} else {
@@ -240,20 +253,18 @@ public class NavigationController implements INavigator {
 				
 				
 			}
-			
-			try {
 				
 				for(Coordinate test : possibleMoves) {
 					if(this.MoveTo(test)) {
 						didMove = true;
 						break;
+					} 
+					
+					if (this.navState == NavigationState.ReturningToOrgin || this.navState == NavigationState.Stopped) {
+						break;
 					}
 				}
 				
-			} catch(RuntimeException re) {
-				// MoveTo throws a runtime exception when it returns to the origin
-				break;
-			}
 			
 			
 			if (didMove == false) {
