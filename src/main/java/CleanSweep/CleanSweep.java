@@ -18,6 +18,8 @@ public class CleanSweep implements INavigationObserver, INavigationChecker {
 	
 	private DirtCollection dirtCollection;
 	
+	private CleanSweepAnalytics analytics = new CleanSweepAnalytics();
+	
 	public CleanSweep() {
 		//create the navigation controller
 		navigationController = new NavigationController();
@@ -43,7 +45,9 @@ public class CleanSweep implements INavigationObserver, INavigationChecker {
 			
 			System.out.println(e);
 		}
-		System.out.println("Roaming Complete!");
+		System.out.println("**********************************");
+		System.out.println("Roaming Complete! Statistics Below:");
+		System.out.print(this.analytics);
 		
 	}
 
@@ -54,20 +58,25 @@ public class CleanSweep implements INavigationObserver, INavigationChecker {
 		// get a notification each time the INavigator moves
 		SensorCell currentCellInfo = sensor.GetSensorDataForCoordinate(navigatedTo.getX(), navigatedTo.getY()); 
 		
+		//update our stats
+		analytics.spacesMoves++;
+		
 		//we know where we are and can call dirt collection, get data, resolve battery life
 		System.out.println("====================================");
 		System.out.println("CS has moved to " + currentCellInfo.getXCoordinate() + ", " + currentCellInfo.getYCoordinate());
 		System.out.println("Current Battery Life: " + power.GetBatteryLevel());
-		System.out.println("Current Dirt: " + dirtCollection.getCurrentDirt());
+		System.out.println("Current Dirt Held: " + dirtCollection.getCurrentDirt());
 		System.out.println("Current Navigation State: " + navigationController.CurrentNavigationState());
 		System.out.println("Current Weighted Cost to home: " + this.GetWeightedCostToOrigin(navigationController.CurrentLocation()));
+		System.out.println("Cell Debug Info " + currentCellInfo);
 		System.out.println("====================================");
 		//ex: dirtCollection.CollectDirt(currentCellInfo)
 		// or dirtCollection.CollectDirt(currentCellInfo.getDirtAmount(), currentCellInfo.getFloorType());
 		
 		//charge the CS if we are at the charging station
 		if (currentCellInfo.isChargingStation()) {
-			
+			//update our stats
+			analytics.timesRecharged++;
 			power.Charge();
 			
 		}
@@ -84,9 +93,16 @@ public class CleanSweep implements INavigationObserver, INavigationChecker {
 				dirtCollection.collectDirt();
 				currentCellInfo.setDirtAmount(currentCellInfo.getDirtAmount() - 1);
 				
+				//update our stats
+				analytics.dirtSwept++;
+				
 				if(power.RequestEnergy(currentCellInfo.getFloorType().GetValue()) == false) {
 					throw new RuntimeException("We've run out of battery life!");
 				}
+				//update our stats
+				analytics.powerUsed+=currentCellInfo.getFloorType().GetValue();
+				
+				
 			} else {
 				
 				//we don't have power to collect this dirt.
@@ -129,10 +145,7 @@ public class CleanSweep implements INavigationObserver, INavigationChecker {
 			
 			//this probably works but depends upon navigation to move back to the current space to be accurate
 			double batteryLifeNeededToGetHomeFromNextSquare = costFromNextCell + nextMoveNavCost; 
-			System.out.println("Cost home from current cell = " + this.GetWeightedCostToOrigin(navigationController.CurrentLocation()) );
-			System.out.println("Cost home from next cell = " + costFromNextCell + " battery life needed to get home " + batteryLifeNeededToGetHomeFromNextSquare);
 			if ((power.GetBatteryLevel() - nextMoveNavCost) <= batteryLifeNeededToGetHomeFromNextSquare) {
-				System.out.println("");
 				navigationController.returnToOrigin();
 				return false;
 				
@@ -144,6 +157,10 @@ public class CleanSweep implements INavigationObserver, INavigationChecker {
 			if(power.RequestEnergy(nextMoveNavCost) == false) {
 				throw new RuntimeException("We've run out of battery life!");
 			}
+			
+			//update our stats
+			analytics.powerUsed+=nextMoveNavCost;
+			
 		}
 
 		return canWeMoveInThisDirection;
@@ -154,7 +171,6 @@ public class CleanSweep implements INavigationObserver, INavigationChecker {
 			SensorCell nextCell) {
 		
 		if(currentCell == null || nextCell == null) {
-			System.out.println("");
 			return false;
 		}
 		
@@ -265,6 +281,29 @@ public class CleanSweep implements INavigationObserver, INavigationChecker {
 		childNavigator.returnToOrigin();
 		
 		return tracker.getTrackedWeight();
+	}
+	
+	class CleanSweepAnalytics {
+		
+		public int dirtSwept;
+		public int timesRecharged;
+		public int spacesMoves;
+		public double powerUsed;
+		
+		
+		@Override
+		public String toString() {
+			StringBuilder sb = new StringBuilder();
+			
+			sb.append("Dirt Swept = " + this.dirtSwept + "\r\n");
+			sb.append("Spaces Moved = " + this.spacesMoves + "\r\n");
+			sb.append("Power Used = " + this.powerUsed + "\r\n");
+			sb.append("Times Recharged = " + this.timesRecharged + "\r\n");
+			return sb.toString();
+			
+			
+		}
+		
 	}
 	
 	

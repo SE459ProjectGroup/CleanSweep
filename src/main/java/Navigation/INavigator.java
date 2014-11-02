@@ -24,16 +24,6 @@ public interface INavigator {
 	 */
 	Coordinate CurrentLocation();
 
-	/**
-	 * Tell the INavigator object to begin moving independent of individual commands
-	 */
-	//void BeginAutoNavigation();
-	
-	/**
-	 * Tell the INavigator to stop autoNavigating
-	 */
-	void StopAutoNavigation();
-
 	void SetDestinationPoint(Coordinate c);
 
 	Coordinate GetDestinationPoint();

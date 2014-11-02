@@ -14,6 +14,11 @@ public class NavigationController implements INavigator {
 	
 	
 	@Override
+	/*
+	 * Move the Object to an adjacent cell.
+	 * (non-Javadoc)
+	 * @see main.java.Navigation.INavigator#MoveTo(main.java.Navigation.Coordinate)
+	 */
 	public boolean MoveTo(Coordinate c) {
 		//System.out.println("MoveTo: Moving to " + c.toString() + " from " + this.CurrentLocation());
 		int difX = Math.abs(c.getX() - this.currentLocation.getX());
@@ -42,42 +47,32 @@ public class NavigationController implements INavigator {
 
 
 	@Override
+	/*
+	 * The current coordinate the navigator is on
+	 * (non-Javadoc)
+	 * @see main.java.Navigation.INavigator#CurrentLocation()
+	 */
 	public Coordinate CurrentLocation() {
 		return this.currentLocation;
 	}
 
+	/*
+	 * the previous location of the Clean Sweep
+	 * (non-Javadoc)
+	 * @see main.java.Navigation.INavigator#PreviousLocation()
+	 */
 	@Override
 	public Coordinate PreviousLocation() {
 		return this.previousLocation;
 	}
 	
+	/*
+	 * Public default constructor
+	 */
 	public NavigationController() {
 		this.currentLocation = new Coordinate(0,0);
 	}
 
-//	@Override
-//	public void BeginAutoNavigation() {
-//		int maxMoves = 5;
-//		int currentMoves = 0;
-//		this.navState = NavigationState.Navigating;
-//		
-//		while(this.navState == NavigationState.Navigating && currentMoves < maxMoves) {
-//			
-//			if(this.MoveTo(new Coordinate(this.CurrentLocation().getX(), this.CurrentLocation().getY() + 1 )) == false) {
-//				
-//				this.navState = NavigationState.Stopped;
-//			}
-//			currentMoves++;
-//		}
-//		
-//	}
-
-	@Override
-	public void StopAutoNavigation() {
-		
-		this.navState = NavigationState.Stopped;
-		
-	}
 	
 	Coordinate destinationPoint;
 
@@ -238,12 +233,12 @@ public class NavigationController implements INavigator {
 		for(int i = 0; (i < count && this.navState != NavigationState.ReturningToOrgin ); i++) {
 			didMove = false;
 			//load the next possible moves
-			possibleMoves = new ArrayList<Coordinate>() {{
-				add(new Coordinate(currentLocation.getX(),currentLocation.getY() + 1));
-				add(new Coordinate(currentLocation.getX() + 1,currentLocation.getY()));
-				add(new Coordinate(currentLocation.getX(),currentLocation.getY() - 1));
-				add(new Coordinate(currentLocation.getX() - 1,currentLocation.getY()));			
-			}};
+			possibleMoves = new ArrayList<Coordinate>();
+			
+			possibleMoves.add(new Coordinate(currentLocation.getX(),currentLocation.getY() + 1));
+			possibleMoves.add(new Coordinate(currentLocation.getX() + 1,currentLocation.getY()));
+			possibleMoves.add(new Coordinate(currentLocation.getX(),currentLocation.getY() - 1));
+			possibleMoves.add(new Coordinate(currentLocation.getX() - 1,currentLocation.getY()));			
 			
 			try {
 				

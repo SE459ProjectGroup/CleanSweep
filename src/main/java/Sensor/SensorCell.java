@@ -148,4 +148,27 @@ public class SensorCell {
 		
 	}
 	
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("Location: X = " + this.getXCoordinate() + ", Y = " + this.getYCoordinate() + "\n");
+		
+		sb.append("Floor Type = " + this.getFloorType() + "\n");
+		sb.append("Is Charging Station? = " + this.isChargingStation() + "\n");
+		
+		sb.append("Dirt Amount = " + this.getDirtAmount() + "\n");
+		sb.append("Navigation Data: \n");
+		sb.append("\t" + "Left Navigation Type = " + this.getLeftNavigatableType() + "\n");
+		sb.append("\t" + "Top Navigation Type = " + this.getTopNavigatableType() + "\n");
+		sb.append("\t" + "Right Navigation Type = " + this.getRightNavigatableType() + "\n");
+		sb.append("\t" + "Bottom Navigation Type = " + this.getBottomNavigatableType() + "\n");
+		
+		
+		return sb.toString();
+		
+	}
+	
+	
 }
