@@ -7,33 +7,32 @@ public class DirtCollection {
 	private int dirtCount=0;
 	private int dirtLimit=50;
 	
+	
+	
 	public DirtCollection()
 	{
 		dirtCount++;
 	}
 
-	public void collectDirt()
+	public Boolean collectDirt() 
 	{
-	
-
-		if (dirtCount <= dirtLimit)
+		
+		if(dirtCount <= dirtLimit)
 		{
 			 result= this.dirtCount;
-			System.out.println("current dirt "+ result);
 			dirtCount++;
+			return true;
 		}
-		else 
+		else
 		{
-			
-		//container is full
-		System.out.println("Empty Me..");
-			
+	  	return false;
 		}
-		
-			
+	
+	
 	}
 
-	
+
+
 	public int getCurrentDirt()
 	{
 		
@@ -43,4 +42,7 @@ public class DirtCollection {
 	}
 	
 	
+	
+
 }
+
