@@ -61,6 +61,10 @@ public class CleanSweep implements INavigationObserver, INavigationChecker {
 		//update our stats
 		analytics.spacesMoves++;
 		
+		if (this.navigationController.CurrentNavigationState() == NavigationState.Navigating) {
+			analytics.spacesRoamed++;
+		}
+		
 		//we know where we are and can call dirt collection, get data, resolve battery life
 		System.out.println("====================================");
 		System.out.println("CS has moved to " + currentCellInfo.getXCoordinate() + ", " + currentCellInfo.getYCoordinate());
@@ -289,7 +293,7 @@ public class CleanSweep implements INavigationObserver, INavigationChecker {
 		public int timesRecharged;
 		public int spacesMoves;
 		public double powerUsed;
-		
+		public int spacesRoamed;
 		
 		@Override
 		public String toString() {
@@ -297,6 +301,7 @@ public class CleanSweep implements INavigationObserver, INavigationChecker {
 			
 			sb.append("Dirt Swept = " + this.dirtSwept + "\r\n");
 			sb.append("Spaces Moved = " + this.spacesMoves + "\r\n");
+			sb.append("Spaces Roamed = " + this.spacesRoamed + "\r\n");
 			sb.append("Power Used = " + this.powerUsed + "\r\n");
 			sb.append("Times Recharged = " + this.timesRecharged + "\r\n");
 			return sb.toString();
