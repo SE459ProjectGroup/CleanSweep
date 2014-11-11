@@ -17,6 +17,27 @@ public class DirtCollectionTest {
 	DirtCollection d1;
 	DirtCollection d2;
 	DirtCollection d3;
+	DirtCollection cleanSweepAtCapacity;
+	DirtCollection cleanSweepNotAtCapacity; 
+	
+	@Before
+	public void create(){
+		cleanSweepAtCapacity = new DirtCollection();
+		cleanSweepAtCapacity.setDirtCount(50);
+		
+		cleanSweepNotAtCapacity = new DirtCollection();
+		cleanSweepNotAtCapacity.setDirtCount(20);
+		
+		/*cleanSweepAtCapacity = Mockito.mock(DirtCollection.class);
+		//cleanSweepAtCapacity.setDirtCount(50);
+		when(cleanSweepAtCapacity.collectDirt()).thenReturn(false);
+		
+		cleanSweepNotAtCapacity = Mockito.mock(DirtCollection.class);
+		//cleanSweepAtCapacity.setDirtCount(10);
+		when(cleanSweepNotAtCapacity.collectDirt()).thenReturn(true);
+		*/
+	}
+	
 	@Test
 	public void collectDirtTest1() {
 		DirtCollection d1= new DirtCollection();
@@ -46,6 +67,13 @@ public class DirtCollectionTest {
 		assertEquals(d3.getCurrentDirt(),50);
 	}
 
-	
+	@Test
+	public void cleanSweepIndicatesWhenAtcapacityTest(){
+		assertEquals(cleanSweepAtCapacity.collectDirt(), false);
+	}
+	@Test
+	public void cleanSweepCollectDirtWhenNotAtcapacityTest(){
+		assertEquals(cleanSweepNotAtCapacity.collectDirt(), true);
+	}
 	
 }
