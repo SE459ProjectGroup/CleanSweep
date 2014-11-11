@@ -25,7 +25,8 @@ public class DirtCollection {
 		}
 		else
 		{
-	  	return false;
+			indicateCleanSweepIsFull();
+			return false;
 		}
 	
 	
@@ -33,12 +34,24 @@ public class DirtCollection {
 
 
 
+	private void indicateCleanSweepIsFull() {
+		System.out.println("Clean Sweep Is Full!");
+	}
+
 	public int getCurrentDirt()
 	{
 		
 		return result;
 		
 		
+	}
+
+	public int getDirtCount() {
+		return dirtCount;
+	}
+
+	public void setDirtCount(int dirtCount) {
+		this.dirtCount = dirtCount;
 	}
 	
 	
