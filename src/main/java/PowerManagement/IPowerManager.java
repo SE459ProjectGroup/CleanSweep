@@ -1,5 +1,7 @@
 package main.java.PowerManagement;
 
+import main.java.Sensor.FloorType;
+
 public interface IPowerManager {
 
 	public double GetBatteryLevel();
@@ -9,10 +11,14 @@ public interface IPowerManager {
 	public void Charge();
 	
 	//once the above is complete, we should find more graceful ways of determining
-	//home much energy is needed
+	//how much energy is needed
 	
-	//public int GetEnergyCostForDirtCollection(FloorType floorType);
+	public double GetEnergyCostForDirtCollection(FloorType floorType);
 	
-	//public int GetEnergyCostForNavigation(FloorType floorType);
+	public double GetEnergyCostForNavigation(FloorType floorType);
+
+	public double GetTotalEnergyCost(FloorType floorType, int dirtAmount);	
+
+	public double GetPowerUsedForMove(FloorType floorType);
 	
 }
