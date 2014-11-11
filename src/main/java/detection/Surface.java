@@ -1,6 +1,7 @@
 package main.java.detection;
 
 import main.java.Navigation.Coordinate;
+import main.java.Sensor.FloorType;
 import main.java.Sensor.XMLParser.ParseXML;
 
 public class Surface {
@@ -33,5 +34,10 @@ public class Surface {
 	}
 	
 
+	public void changeCleanToolFromSurfaceType(FloorType type ){
+		
+		System.out.println("Changing cleaning apparatus to " + type);
+		
+	}
 	
 }
