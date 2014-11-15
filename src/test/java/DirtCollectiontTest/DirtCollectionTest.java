@@ -80,11 +80,16 @@ public class DirtCollectionTest {
 	public void cleanSweepMustUpdateItsDirtCountWhenItIsEmptied() {
 		
 		cleanSweepAtCapacity.empty();
-		
-		
+				
 		assertTrue(cleanSweepAtCapacity.getDirtCount() == 0);
-		
-		
-		
+
 	}
+	
+	@Test
+	public void cleanSweepTurnsOnEmptyMeIndicatorWhenFull() {
+		
+		assertTrue(cleanSweepAtCapacity.isFull() == true);
+	
+	}
+	
 }

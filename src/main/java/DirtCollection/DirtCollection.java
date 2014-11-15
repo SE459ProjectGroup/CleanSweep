@@ -6,21 +6,21 @@ public class DirtCollection {
 	private int result=0;
 	private int dirtCount=0;
 	private int dirtLimit=50;
-	
-	
+
 	
 	public DirtCollection()
 	{
-		dirtCount++;
+		//dirt collection count should start at 0
+		//dirtCount++;
 	}
 
 	public Boolean collectDirt() 
 	{
-		
-		if(dirtCount < dirtLimit)
+		if(this.isFull() == false)
 		{
-			 result= this.dirtCount;
+			 
 			dirtCount++;
+			result= this.dirtCount;
 			return true;
 		}
 		else
@@ -68,6 +68,14 @@ public class DirtCollection {
 		 */
 		this.dirtCount = 0;
 		
+	}
+
+	/**
+	 * Get a boolean indicating if the dirt collector is currently full
+	 * @return true if full, false if not
+	 */
+	public boolean isFull() {
+		return (this.dirtCount >= dirtLimit);
 	}
 	
 	

@@ -83,6 +83,9 @@ public class CleanSweep implements INavigationObserver, INavigationChecker {
 			analytics.timesRecharged++;
 			power.Charge();
 			
+			
+			//we're at the charging station, which is also apparently capable of taking our dirt
+			this.dirtCollection.empty();
 		}
 		
 		while(currentCellInfo.getDirtAmount() > 0 && navigationController.CurrentNavigationState() != NavigationState.ReturningToOrgin) {
@@ -94,17 +97,27 @@ public class CleanSweep implements INavigationObserver, INavigationChecker {
 			if(batteryLifeAfterNavigatingToHome > 0) {
 				
 				//proceed with dirt collection
-				dirtCollection.collectDirt();
-				currentCellInfo.setDirtAmount(currentCellInfo.getDirtAmount() - 1);
-				
-				//update our stats
-				analytics.dirtSwept++;
-				
-				if(power.RequestEnergy(currentCellInfo.getFloorType().GetValue()) == false) {
-					throw new RuntimeException("We've run out of battery life!");
+				if(dirtCollection.collectDirt()) {
+					currentCellInfo.setDirtAmount(currentCellInfo.getDirtAmount() - 1);
+					
+					//update our stats
+					analytics.dirtSwept++;
+					
+					if(power.RequestEnergy(currentCellInfo.getFloorType().GetValue()) == false) {
+						throw new RuntimeException("We've run out of battery life!");
+					}
+					//update our stats
+					analytics.powerUsed+=currentCellInfo.getFloorType().GetValue();
+				} else {
+					
+					if (dirtCollection.isFull()) {
+						//we're full, let's go home
+						this.navigationController.returnToOrigin();
+						break;
+					}
+					
 				}
-				//update our stats
-				analytics.powerUsed+=currentCellInfo.getFloorType().GetValue();
+				
 				
 				
 			} else {
