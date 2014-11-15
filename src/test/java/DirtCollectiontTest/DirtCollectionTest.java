@@ -76,4 +76,15 @@ public class DirtCollectionTest {
 		assertEquals(cleanSweepNotAtCapacity.collectDirt(), true);
 	}
 	
+	@Test
+	public void cleanSweepMustUpdateItsDirtCountWhenItIsEmptied() {
+		
+		cleanSweepAtCapacity.empty();
+		
+		
+		assertTrue(cleanSweepAtCapacity.getDirtCount() == 0);
+		
+		
+		
+	}
 }
