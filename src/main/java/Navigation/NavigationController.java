@@ -262,7 +262,7 @@ public class NavigationController implements INavigator {
 				
 			
 			
-			if (didMove == false) {
+			if (didMove == false && this.navState != NavigationState.ReturningToOrgin) {
 				//we couldnt move to any of the possible moves, back it up!
 				this.MoveTo(this.PreviousLocation());
 				
