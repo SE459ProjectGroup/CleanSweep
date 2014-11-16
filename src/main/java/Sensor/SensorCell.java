@@ -42,12 +42,28 @@ public class SensorCell {
 	 */
 	private int dirtAmount;
 
-	public int getDirtAmount() {
+	protected int getDirtAmount() {
 		return dirtAmount;
 	}
 
 	public void setDirtAmount(int dirtAmount) {
 		this.dirtAmount = dirtAmount;
+	}
+	
+	/**
+	 * Check if the cell has any dirt in it
+	 * @return
+	 */
+	public boolean hasDirt() {
+		return (dirtAmount > 0);
+	}
+	
+	public void dirtCollected() {
+		
+		if (dirtAmount > 0) {
+			dirtAmount--;
+		}
+		
 	}
 	
 	/*

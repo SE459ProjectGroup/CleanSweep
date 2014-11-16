@@ -77,7 +77,7 @@ public class CleanSweep implements INavigationObserver, INavigationChecker {
 			this.dirtCollection.empty();
 		}
 		
-		while(currentCellInfo.getDirtAmount() > 0 && navigationController.CurrentNavigationState() != NavigationState.ReturningToOrgin) {
+		while(currentCellInfo.hasDirt() && navigationController.CurrentNavigationState() != NavigationState.ReturningToOrgin) {
 			double costToHome = this.GetWeightedCostToOrigin(navigationController.CurrentLocation());
 			double currentBatteryLife = power.GetBatteryLevel();
 			double batteryLifeAfterDirtCollection = currentBatteryLife - currentCellInfo.getFloorType().GetValue();
@@ -87,7 +87,8 @@ public class CleanSweep implements INavigationObserver, INavigationChecker {
 				
 				//proceed with dirt collection
 				if(dirtCollection.collectDirt()) {
-					currentCellInfo.setDirtAmount(currentCellInfo.getDirtAmount() - 1);
+					//currentCellInfo.setDirtAmount(currentCellInfo.getDirtAmount() - 1);
+					currentCellInfo.dirtCollected();
 					
 					//update our stats
 					analytics.dirtSwept++;

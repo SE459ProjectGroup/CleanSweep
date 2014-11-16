@@ -76,7 +76,7 @@ public class SensorTest {
 	}
 	
 	@Test
-	public void TestISensorReturnsCorrectDirtAmount() {
+	public void TestISensorReturnsCorrectHasDirtCorrectly() {
 		final int testAmount = 10;
 		Mockito.when(sensor.GetSensorDataForCoordinate(1, 0)).thenReturn(new SensorCell() {{
 			setFloorType(FloorType.HighCarpet);
@@ -85,7 +85,7 @@ public class SensorTest {
 		
 		SensorCell sc = sensor.GetSensorDataForCoordinate(1, 0);
 		
-		assertTrue(sc.getDirtAmount() == testAmount);
+		assertTrue(sc.hasDirt());
 		
 		Mockito.verify(sensor).GetSensorDataForCoordinate(1, 0);
 	}
