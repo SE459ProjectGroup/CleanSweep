@@ -210,11 +210,24 @@ public class NavigationTest implements INavigationObserver {
 	@Test
 	public void TestPreviousLocationIsAccurate() {
 		
+		Coordinate origin = new Coordinate(0,0);
+		
 		Coordinate next = new Coordinate(0,1);
+		
+		Coordinate moveTwo = new Coordinate(1,1);
 		
 		toNavigate.MoveTo(next);
 		
-		assertTrue(toNavigate.PreviousLocation().equals(new Coordinate(0,0)));
+		assertTrue(toNavigate.PreviousLocation().equals(origin));
+		
+		toNavigate.MoveTo(origin);
+		
+		assertTrue(toNavigate.PreviousLocation().equals(next));
+		
+		toNavigate.MoveTo(next);
+		toNavigate.MoveTo(moveTwo);
+		
+		assertTrue(toNavigate.PreviousLocation().equals(next));
 		
 	}
 	
@@ -292,4 +305,25 @@ public class NavigationTest implements INavigationObserver {
 		assertTrue(toNavigate.CurrentLocation().equals(new Coordinate(0,0)));
 		
 	}
+	
+	
+	@Test
+	public void TestNavigatorDefaultsToMovingToAnUnexploredCoordinate() {
+		
+		Coordinate origin = new Coordinate(0,0);
+		
+		toNavigate.roam(1);
+		
+		Coordinate move1 = toNavigate.CurrentLocation();
+
+		toNavigate.MoveTo(origin);
+		
+		toNavigate.roam(1);
+		
+		assertFalse(toNavigate.CurrentLocation().equals(move1));
+		
+	}
+	
+	
+	
 }

@@ -1,6 +1,8 @@
 package main.java.Navigation;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class NavigationController implements INavigator {
@@ -235,23 +237,55 @@ public class NavigationController implements INavigator {
 			//load the next possible moves
 			possibleMoves = new ArrayList<Coordinate>();
 			
-			possibleMoves.add(new Coordinate(currentLocation.getX(),currentLocation.getY() + 1));
 			possibleMoves.add(new Coordinate(currentLocation.getX() + 1,currentLocation.getY()));
+			possibleMoves.add(new Coordinate(currentLocation.getX(),currentLocation.getY() + 1));
 			possibleMoves.add(new Coordinate(currentLocation.getX(),currentLocation.getY() - 1));
-			possibleMoves.add(new Coordinate(currentLocation.getX() - 1,currentLocation.getY()));			
+			possibleMoves.add(new Coordinate(currentLocation.getX() - 1,currentLocation.getY()));
+						
 			
 			try {
-				
-				possibleMoves.remove(this.PreviousLocation());
+				//possibleMoves.remove(currentLocation);
+				//possibleMoves.remove(this.PreviousLocation());
 				
 			} catch(Exception e) {
 				
 				
 			}
 				
+			Collections.sort(possibleMoves, new Comparator<Coordinate>() {
+
+				@Override
+				public int compare(Coordinate arg0, Coordinate arg1) {
+
+					boolean haveRoamedtoArg0 = previouslyRoamedToCoordinates.contains(arg0);
+					boolean haveRoamedToArg1 = previouslyRoamedToCoordinates.contains(arg1);
+					if	(haveRoamedtoArg0 && haveRoamedToArg1 == false) {
+						return 1;
+					} else if(haveRoamedtoArg0 == false && haveRoamedToArg1) {
+						return -1;
+					}
+					return 0;
+				}
+				
+				
+				
+			});
+			
+			if (possibleMoves.contains(previousLocation)) {
+				
+				possibleMoves.remove(previousLocation);
+				possibleMoves.add(previousLocation);
+			}
+			
 				for(Coordinate test : possibleMoves) {
 					if(this.MoveTo(test)) {
 						didMove = true;
+						try	{
+							this.previouslyRoamedToCoordinates.add(test);
+						} catch(Exception e) {
+							//if we've been here before, we'll get an exception. OK to ignore
+							System.out.println(e.getMessage());
+						}
 						break;
 					} 
 					
@@ -272,6 +306,8 @@ public class NavigationController implements INavigator {
 		this.navState = NavigationState.Stopped;
 		
 	}
+	
+	public List<Coordinate> previouslyRoamedToCoordinates = new ArrayList<Coordinate>();
 	
 	
 	@Override

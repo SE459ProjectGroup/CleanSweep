@@ -147,14 +147,14 @@ public class CleanSweep implements INavigationObserver, INavigationChecker {
 		//now calculate power cost of the move
 		double nextMoveNavCost = (currentCell.getFloorType().GetValue()  + nextCell.getFloorType().GetValue()) * .5;
 		
-		if (navigationController.CurrentNavigationState() != NavigationState.ReturningToOrgin) {
+		if (navigationController.CurrentNavigationState() != NavigationState.ReturningToOrgin && canWeMoveInThisDirection) {
 			double costFromNextCell = this.GetWeightedCostToOrigin(new Coordinate(nextCell.getXCoordinate(), nextCell.getYCoordinate()));
 			
 			//this probably works but depends upon navigation to move back to the current space to be accurate
 			double batteryLifeNeededToGetHomeFromNextSquare = costFromNextCell + nextMoveNavCost; 
 			if ((power.GetBatteryLevel() - nextMoveNavCost) <= batteryLifeNeededToGetHomeFromNextSquare) {
 				navigationController.returnToOrigin();
-				return false;
+				canWeMoveInThisDirection = false;
 				
 			}
 		}
@@ -393,6 +393,18 @@ public class CleanSweep implements INavigationObserver, INavigationChecker {
 			
 			
 		}
+		
+	}
+
+	/**
+	 * Method which kicks off a cleaning cycle. The CS must navigate to each
+	 * accessible space and clean it if necessary. Once every space is clean,
+	 * CS must return to the docking station.
+	 *
+	 */
+	public void startClean() {
+		
+		
 		
 	}
 	
