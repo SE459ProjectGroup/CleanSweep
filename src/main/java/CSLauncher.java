@@ -1,5 +1,7 @@
-package main.java.CleanSweep;
+package main.java;
 
+import main.java.CleanSweep.CleanSweep;
+import main.java.DirtCollection.DirtCollection;
 
 
 public class CSLauncher {
