@@ -6,6 +6,8 @@
  
 		 <properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		
+    <sonar.sourceDirectory>src</sonar.sourceDirectory>
 		</properties>
  		
   
@@ -20,7 +22,6 @@
         </configuration>
       </plugin>  
     </plugins>
-    <sourceDirectory>src</sourceDirectory>
   </build>
   
   
