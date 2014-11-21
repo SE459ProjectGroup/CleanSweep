@@ -6,8 +6,6 @@
  
 		 <properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		
-    <sonar.sourceDirectory>/var/lib/jenkins/jobs/CleanSweepJohnBrunaMohaJoe/workspace/src/</sonar.sourceDirectory>
 		</properties>
  		
   
