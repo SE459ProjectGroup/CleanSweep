@@ -30,8 +30,18 @@ public class NavigationController implements INavigator {
 		}
 		
 		if (this.navChecker != null) {
-			
-			boolean res = this.navChecker.CheckCoordinate(c);
+			NavigationCheckResult ncres= this.navChecker.CheckCoordinate(c);
+			if (ncres.getDidNavigateToOrgin()) {
+				//we returned to base
+				//now what?
+				//set the destination point and try to move there.
+				//if we can, super, if not return false
+				this.SetDestinationPoint(c);
+				//if(this.MoveToDestination()) {
+				//	return true;
+				//}
+			}
+			boolean res = ncres.getCanNavigate();
 			if(res == false) { 
 				//System.out.println("MoveTo: Cannot Move To Location");
 				return false; 
@@ -90,7 +100,7 @@ public class NavigationController implements INavigator {
 	}
 
 	@Override
-	public void MoveToDestination() {
+	public boolean MoveToDestination() {
 		
 		int xDelta, yDelta;
 		
@@ -100,6 +110,7 @@ public class NavigationController implements INavigator {
 			
 		}
 		
+		Coordinate originalDestination = this.GetDestinationPoint();
 		
 		while ((this.navState == NavigationState.Navigating || this.navState == NavigationState.ReturningToOrgin)&& this.CurrentLocation().equals(this.GetDestinationPoint()) == false) {
 			xDelta = this.CurrentLocation().getX() - this.GetDestinationPoint().getX();
@@ -161,13 +172,22 @@ public class NavigationController implements INavigator {
 			}
 			
 		}
-		if (this.navState == NavigationState.Navigating) {
+			
+		
+		if (this.navState == NavigationState.Navigating || this.navState == NavigationState.ReturningToOrgin) {
 			
 			this.navState = NavigationState.Stopped;
 			
 		}
 		
+
 		
+		
+		if	(this.CurrentLocation().equals(originalDestination)) {
+			
+			return true;
+		}
+		return false;
 	}
 
 	INavigationChecker navChecker;
@@ -231,6 +251,7 @@ public class NavigationController implements INavigator {
 		boolean didMove;
 		
 		this.navState = NavigationState.Navigating;
+		
 		
 		for(int i = 0; (i < count && this.navState != NavigationState.ReturningToOrgin ); i++) {
 			didMove = false;

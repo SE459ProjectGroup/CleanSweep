@@ -15,10 +15,9 @@ public class CSLauncher {
 		
 		try{
 		//roam around the area for 10 spaces
-		for (int i = 0; i < 10; i++) {
-			cs.getNavigationController().roam(10);
-		}
-		}catch(Exception e) {
+			cs.getNavigationController().roam(1000);
+		
+		} catch(Exception e) {
 			
 			System.out.println(e);
 		}

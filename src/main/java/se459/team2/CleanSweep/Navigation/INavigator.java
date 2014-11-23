@@ -28,7 +28,7 @@ public interface INavigator {
 
 	Coordinate GetDestinationPoint();
 
-	void MoveToDestination();
+	boolean MoveToDestination();
 
 	void SetNavigationChecker(INavigationChecker inc);
 

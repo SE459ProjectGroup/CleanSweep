@@ -8,7 +8,7 @@ import se459.team2.CleanSweep.Sensor.ISensorArray;
 import se459.team2.CleanSweep.Sensor.LocalSensorSource;
 import se459.team2.CleanSweep.Sensor.SensorCell;
 
-public class CleanSweep implements INavigationObserver, INavigationChecker {
+public class CleanSweep implements INavigationObserver, INavigationChecker, IActionPerformer {
 
 	private INavigator navigationController;
 	
@@ -22,8 +22,12 @@ public class CleanSweep implements INavigationObserver, INavigationChecker {
 	
 	public CleanSweep() {
 		//create the navigation controller
-		navigationController = new NavigationController();
+		ActionPropagatorNavigator anp = new ActionPropagatorNavigator();
 
+		anp.setActionPerformer( this);
+		
+		navigationController = anp;
+		
 		//hook up our navigation events
 		navigationController.addNavigationObserver(this);
 		navigationController.SetNavigationChecker(this);
@@ -39,7 +43,52 @@ public class CleanSweep implements INavigationObserver, INavigationChecker {
 
 		
 	}
+	
+	@Override
+	public boolean performAction(Coordinate navigatedTo) {
+		// get a notification each time the INavigator moves
+		SensorCell currentCellInfo = sensor.GetSensorDataForCoordinate(navigatedTo.getX(), navigatedTo.getY()); 
+		
+		while(currentCellInfo.hasDirt() && navigationController.CurrentNavigationState() != NavigationState.ReturningToOrgin) {
+			double costToHome = this.GetWeightedCostToOrigin(navigationController.CurrentLocation());
+			double currentBatteryLife = power.GetBatteryLevel();
+			double batteryLifeAfterDirtCollection = currentBatteryLife - currentCellInfo.getFloorType().GetValue();
+			double batteryLifeAfterNavigatingToHome = batteryLifeAfterDirtCollection - costToHome;
+			
+			if(batteryLifeAfterNavigatingToHome > 0) {
+				
+				//proceed with dirt collection
+				if(dirtCollection.collectDirt()) {
+					//currentCellInfo.setDirtAmount(currentCellInfo.getDirtAmount() - 1);
+					currentCellInfo.dirtCollected();
+					
+					//update our stats
+					analytics.dirtSwept++;
+					//System.out.println("We've collected dirt!!");
+					if(power.RequestEnergy(currentCellInfo.getFloorType().GetValue()) == false) {
+						throw new RuntimeException("We've run out of battery life!");
+					}
+					//update our stats
+					analytics.powerUsed+=currentCellInfo.getFloorType().GetValue();
+				} else {
+					
 
+					
+				}
+				
+				
+				
+			} else {
+				
+				//we don't have power to collect this dirt.
+				//this.navigationController.returnToOrigin();
+				//we definetely need to exit, should we also
+				break;
+			}
+			
+		}
+		return (currentCellInfo.hasDirt() == false);
+	}
 
 	@Override
 	public void didNavigate(Coordinate navigatedTo) {
@@ -77,48 +126,7 @@ public class CleanSweep implements INavigationObserver, INavigationChecker {
 			this.dirtCollection.empty();
 		}
 		
-		while(currentCellInfo.hasDirt() && navigationController.CurrentNavigationState() != NavigationState.ReturningToOrgin) {
-			double costToHome = this.GetWeightedCostToOrigin(navigationController.CurrentLocation());
-			double currentBatteryLife = power.GetBatteryLevel();
-			double batteryLifeAfterDirtCollection = currentBatteryLife - currentCellInfo.getFloorType().GetValue();
-			double batteryLifeAfterNavigatingToHome = batteryLifeAfterDirtCollection - costToHome;
-			
-			if(batteryLifeAfterNavigatingToHome > 0) {
-				
-				//proceed with dirt collection
-				if(dirtCollection.collectDirt()) {
-					//currentCellInfo.setDirtAmount(currentCellInfo.getDirtAmount() - 1);
-					currentCellInfo.dirtCollected();
-					
-					//update our stats
-					analytics.dirtSwept++;
-					//System.out.println("We've collected dirt!!");
-					if(power.RequestEnergy(currentCellInfo.getFloorType().GetValue()) == false) {
-						throw new RuntimeException("We've run out of battery life!");
-					}
-					//update our stats
-					analytics.powerUsed+=currentCellInfo.getFloorType().GetValue();
-				} else {
-					
-					if (dirtCollection.isFull()) {
-						//we're full, let's go home
-						this.navigationController.returnToOrigin();
-						break;
-					}
-					
-				}
-				
-				
-				
-			} else {
-				
-				//we don't have power to collect this dirt.
-				this.navigationController.returnToOrigin();
-				//we definetely need to exit, should we also
-				break;
-			}
-			
-		}
+		
 	}
 
 	/**
@@ -130,36 +138,54 @@ public class CleanSweep implements INavigationObserver, INavigationChecker {
 	 * figure out how much power we would need to go home.
 	 */
 	@Override
-	public Boolean CheckCoordinate(Coordinate coordinate) {
+	public NavigationCheckResult CheckCoordinate(Coordinate coordinate) {
+		NavigationCheckResult checkResult = new NavigationCheckResult();
+		
 		SensorCell currentCell = sensor.GetSensorDataForCoordinate(navigationController.CurrentLocation().getX(), navigationController.CurrentLocation().getY());
+		
+		checkResult.setCanMoveLeft(currentCell.getLeftNavigatableType().CanMoveTo());
+		checkResult.setCanMoveRight(currentCell.getRightNavigatableType().CanMoveTo());
+		checkResult.setCanMoveDown(currentCell.getBottomNavigatableType().CanMoveTo());
+		checkResult.setCanMoveUp(currentCell.getTopNavigatableType().CanMoveTo());
+		
 		
 		SensorCell nextCell = sensor.GetSensorDataForCoordinate(coordinate.getX(), coordinate.getY());
 		
 		//System.out.println("About to move to: " + nextCell);
 		//System.out.println("From current: " + currentCell);
 		if(nextCell == null) {
-			return false;
+			checkResult.setCanNavigate(false);
+			return checkResult;
+		}
+
+		if (dirtCollection.isFull() && this.navigationController.CurrentNavigationState() != NavigationState.ReturningToOrgin) {
+			//we're full, let's go home
+			this.navigationController.returnToOrigin();
+			checkResult.setDidNavigateToOrgin(true);
+			return checkResult;
 		}
 		
-		boolean canWeMoveInThisDirection = checkNavigationObstacles(
-				currentCell, nextCell);
+		checkResult.setCanNavigate(checkNavigationObstacles(
+				currentCell, nextCell));
 		
 		//now calculate power cost of the move
 		double nextMoveNavCost = (currentCell.getFloorType().GetValue()  + nextCell.getFloorType().GetValue()) * .5;
 		
-		if (navigationController.CurrentNavigationState() != NavigationState.ReturningToOrgin && canWeMoveInThisDirection) {
+		if (navigationController.CurrentNavigationState() != NavigationState.ReturningToOrgin && checkResult.getCanNavigate()) {
 			double costFromNextCell = this.GetWeightedCostToOrigin(new Coordinate(nextCell.getXCoordinate(), nextCell.getYCoordinate()));
 			
 			//this probably works but depends upon navigation to move back to the current space to be accurate
 			double batteryLifeNeededToGetHomeFromNextSquare = costFromNextCell + nextMoveNavCost; 
 			if ((power.GetBatteryLevel() - nextMoveNavCost) <= batteryLifeNeededToGetHomeFromNextSquare) {
 				navigationController.returnToOrigin();
-				canWeMoveInThisDirection = false;
+				checkResult.setCanNavigate(false);
+				checkResult.setDidNavigateToOrgin(true);
+				//canWeMoveInThisDirection = false;
 				
 			}
 		}
 		
-		if(canWeMoveInThisDirection) {
+		if(checkResult.getCanNavigate()) {
 			
 			if(power.RequestEnergy(nextMoveNavCost) == false) {
 				throw new RuntimeException("We've run out of battery life!");
@@ -170,7 +196,7 @@ public class CleanSweep implements INavigationObserver, INavigationChecker {
 			
 		}
 
-		return canWeMoveInThisDirection;
+		return checkResult;
 	}
 
 
@@ -333,18 +359,19 @@ public class CleanSweep implements INavigationObserver, INavigationChecker {
 			}
 			
 			@Override
-			public Boolean CheckCoordinate(Coordinate coordinate) {
+			public NavigationCheckResult CheckCoordinate(Coordinate coordinate) {
+				NavigationCheckResult res = new NavigationCheckResult();
 				try	{
 					//weight++;
 					SensorCell navigatingFrom = sensor.GetSensorDataForCoordinate(referencedNavigator.CurrentLocation().getX(), referencedNavigator.CurrentLocation().getY());
 					SensorCell navigatingTo = sensor.GetSensorDataForCoordinate(coordinate.getX(), coordinate.getY());
-					return checkNavigationObstacles(
-							navigatingFrom, navigatingTo);
+					res.setCanNavigate(checkNavigationObstacles(
+							navigatingFrom, navigatingTo));
 					 
 				} catch(Exception e) {
 					System.out.println(e.getMessage());
 				}
-				return false;
+				return res;
 			}
 
 			@Override
