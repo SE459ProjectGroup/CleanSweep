@@ -3,7 +3,7 @@ package se459.team2.CleanSweep.CleanSweep;
 import se459.team2.CleanSweep.DirtCollection.DirtCollection;
 import se459.team2.CleanSweep.Navigation.*;
 import se459.team2.CleanSweep.PowerManagement.IPowerManager;
-import se459.team2.CleanSweep.PowerManagement.TempPowerManager;
+import se459.team2.CleanSweep.PowerManagement.PowerManagement;
 import se459.team2.CleanSweep.Sensor.ISensorArray;
 import se459.team2.CleanSweep.Sensor.LocalSensorSource;
 import se459.team2.CleanSweep.Sensor.SensorCell;
@@ -36,7 +36,7 @@ public class CleanSweep implements INavigationObserver, INavigationChecker, IAct
 		sensor = new LocalSensorSource();
 
 		//create the power management object
-		power = new TempPowerManager();
+		power = new PowerManagement();
 		
 		//create dirt collection
 		dirtCollection = new DirtCollection();

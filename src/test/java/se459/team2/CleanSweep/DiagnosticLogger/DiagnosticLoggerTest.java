@@ -51,8 +51,9 @@ public class DiagnosticLoggerTest {
 	/**
 	 * Test of main method, of class DiagnosticLogger.
 	 */
-	@Test
-/*	public void testMain() {
+	
+/*	@Test
+ * public void testMain() {
 		System.out.println("main");
 		String[] args = null;
 		DiagnosticLogger.main(args);
