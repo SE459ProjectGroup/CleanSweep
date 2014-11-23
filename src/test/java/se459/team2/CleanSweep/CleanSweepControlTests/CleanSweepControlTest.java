@@ -10,6 +10,8 @@ import org.mockito.Mockito;
 
 import se459.team2.CleanSweep.CleanSweep.*;
 import se459.team2.CleanSweep.Navigation.Coordinate;
+import se459.team2.CleanSweep.Navigation.INavigationObserver;
+import se459.team2.CleanSweep.Navigation.NavigationState;
 
 public class CleanSweepControlTest {
 
@@ -40,7 +42,7 @@ public class CleanSweepControlTest {
 	}
 	
 	@Test
-	public void TestCleanSweepReturnsToOriginAnsdEmptiesDirtWhenDirtFull() {
+	public void TestCleanSweepEmptiesDirtWhenAtDockingStation() {
 		
 		baseCS.getNavigationController().SetDestinationPoint(new Coordinate(1,1));
 		
@@ -48,12 +50,54 @@ public class CleanSweepControlTest {
 		
 		baseCS.getDirtCollection().setDirtCount(50);
 		
-		baseCS.getNavigationController().SetDestinationPoint(new Coordinate(0,1));
-		baseCS.getNavigationController().MoveToDestination();
+		baseCS.getNavigationController().returnToOrigin();
 		//baseCS.getNavigationController().roam(1);
 		
 		//assertTrue(baseCS.getNavigationController().CurrentLocation().equals(new Coordinate(0,0)));
 		assertTrue(baseCS.getDirtCollection().getDirtCount() == 0);
+	}
+	
+	@Test
+	public void TestCleanSweepReturnsToDockingStationAndContinuesToDestinationWhenFull() {
+		
+		class ReturnToOriginObserver implements INavigationObserver {
+
+			public int totalMoves = 0;
+			public boolean didSetNavigaitonStateToReturnToOrgin = false;
+			public boolean didReturnToOrigin = false;
+			
+			@Override
+			public void didNavigate(Coordinate navigatedTo) {
+				
+				totalMoves++;
+				if(baseCS.getNavigationController().CurrentNavigationState() == NavigationState.ReturningToOrgin) {
+					
+					didSetNavigaitonStateToReturnToOrgin = true;
+				}
+				
+				if(navigatedTo.equals(new Coordinate(0,0))) {
+					didReturnToOrigin = true;
+				}
+				
+			}
+			
+		}
+		
+		baseCS.getNavigationController().SetDestinationPoint(new Coordinate(0,1));
+		
+		baseCS.getNavigationController().MoveToDestination();
+		
+		baseCS.getDirtCollection().setDirtCount(50);
+		ReturnToOriginObserver observer = new ReturnToOriginObserver();
+		baseCS.getNavigationController().addNavigationObserver(observer);
+		
+		baseCS.getNavigationController().SetDestinationPoint(new Coordinate(1,1));
+		baseCS.getNavigationController().MoveToDestination();
+		
+		assertTrue(observer.didSetNavigaitonStateToReturnToOrgin);
+		assertTrue(observer.didReturnToOrigin);
+		assertTrue(observer.totalMoves > 1);
+		
 	}
 	
 	@Test
