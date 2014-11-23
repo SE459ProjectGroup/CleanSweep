@@ -36,12 +36,11 @@ public class CleanSweepControlTest {
 		
 		baseCS.getNavigationController().roam(1);
 		
-		assertTrue(baseCS.getNavigationController().CurrentLocation().equals(new Coordinate(0,0)));
-		
+ 		
 	}
 	
 	@Test
-	public void TestCleanSweepReturnsToOriginWhenDirtFull() {
+	public void TestCleanSweepReturnsToOriginAnsdEmptiesDirtWhenDirtFull() {
 		
 		baseCS.getNavigationController().SetDestinationPoint(new Coordinate(1,1));
 		
@@ -49,10 +48,12 @@ public class CleanSweepControlTest {
 		
 		baseCS.getDirtCollection().setDirtCount(50);
 		
-		baseCS.getNavigationController().roam(1);
+		baseCS.getNavigationController().SetDestinationPoint(new Coordinate(0,1));
+		baseCS.getNavigationController().MoveToDestination();
+		//baseCS.getNavigationController().roam(1);
 		
-		assertTrue(baseCS.getNavigationController().CurrentLocation().equals(new Coordinate(0,0)));
-		
+		//assertTrue(baseCS.getNavigationController().CurrentLocation().equals(new Coordinate(0,0)));
+		assertTrue(baseCS.getDirtCollection().getDirtCount() == 0);
 	}
 	
 	@Test

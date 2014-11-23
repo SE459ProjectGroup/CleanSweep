@@ -50,7 +50,7 @@ public class Coordinate {
 			
 		} catch(Exception e) {
 			//maybe a null reference exception
-			
+			System.out.println("Strange");
 		}
 		return false;
 		

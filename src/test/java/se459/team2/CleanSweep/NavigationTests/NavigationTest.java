@@ -2,6 +2,9 @@ package se459.team2.CleanSweep.NavigationTests;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 import org.junit.After;
 import org.junit.Before;
@@ -84,12 +87,13 @@ public class NavigationTest implements INavigationObserver {
 	@Test
 	public void TestINavigatorCallsINavigationChecker() {
 		INavigationChecker inc = Mockito.mock(INavigationChecker.class);
-		
+		Coordinate destination = new Coordinate(0,1);
+		when(inc.CheckCoordinate(destination)).thenReturn(new NavigationCheckResult() {{ setCanNavigate(false); }});
+
 		toNavigate.SetNavigationChecker(inc);
-		Coordinate d = new Coordinate(1,0);
-		toNavigate.MoveTo(d);
+		toNavigate.MoveTo(destination);
 		
-		verify(inc).CheckCoordinate(d);
+		verify(inc).CheckCoordinate(destination);
 	}
 	
 	
@@ -97,7 +101,7 @@ public class NavigationTest implements INavigationObserver {
 	public void TestINavigatorDoesNotMoveToPointIfCheckerReturnsFalse() {
 		INavigationChecker inc = Mockito.mock(INavigationChecker.class);
 		Coordinate destination = new Coordinate(0,1);
-		when(inc.CheckCoordinate(destination)).thenReturn(false);
+		when(inc.CheckCoordinate(destination)).thenReturn(new NavigationCheckResult() {{ setCanNavigate(false); }});
 
 		toNavigate.SetNavigationChecker(inc);
 		
@@ -111,7 +115,7 @@ public class NavigationTest implements INavigationObserver {
 	public void TestINavigatorMovesToCoordinateIfCheckerReturnsTrue() {
 		INavigationChecker inc = Mockito.mock(INavigationChecker.class);
 		Coordinate destination = new Coordinate(0,1);
-		when(inc.CheckCoordinate(destination)).thenReturn(true);
+		when(inc.CheckCoordinate(destination)).thenReturn(new NavigationCheckResult() {{ setCanNavigate(true); }});
 		
 		toNavigate.SetNavigationChecker(inc);
 		
@@ -131,8 +135,8 @@ public class NavigationTest implements INavigationObserver {
 		Coordinate obstacle = new Coordinate(0,1);
 		Coordinate destination = new Coordinate(0,2);
 		
-		when(inc.CheckCoordinate((Coordinate) anyObject())).thenReturn(true);
-		when(inc.CheckCoordinate(obstacle)).thenReturn(false);
+		when(inc.CheckCoordinate((Coordinate) anyObject())).thenReturn(new NavigationCheckResult() {{ setCanNavigate(true); }});
+		when(inc.CheckCoordinate(obstacle)).thenReturn(new NavigationCheckResult() {{ setCanNavigate(false); }});
 		
 		toNavigate.SetNavigationChecker(inc);
 		
@@ -243,37 +247,6 @@ public class NavigationTest implements INavigationObserver {
 		
 	}
 	
-	@Test
-	public void TestNavigatorStopsRoamingWhenInstructedToReturnToOrigin() {
-		
-		class RoamingObserver implements INavigationObserver {
-
-			
-			public int roamedCoordinates = 0;
-			
-			public final int stopAfterCount = 10;
-			
-			@Override
-			public void didNavigate(Coordinate navigatedTo) {
-				if (toNavigate.CurrentNavigationState() != NavigationState.ReturningToOrgin) roamedCoordinates++;
-				
-				if (roamedCoordinates >= stopAfterCount) {
-					toNavigate.returnToOrigin();
-				}
-			}
-			
-			
-		}
-		
-		RoamingObserver ro = new RoamingObserver();
-		toNavigate.addNavigationObserver(ro);
-		
-		toNavigate.roam(20);
-		
-		assertTrue(ro.roamedCoordinates == ro.stopAfterCount);
-		
-	}
-	
 	
 	@Test
 	public void TestNavigatorReturnsToHomeAndStopsWhenInstructed() {
@@ -325,6 +298,78 @@ public class NavigationTest implements INavigationObserver {
 		
 	}
 	
-	
+	@Test
+	public void TestActionPropagatorMovesToEveryPossibleLocationAndPerformsAction() {
+		
+		
+		final List<Coordinate> possibleCoordinates = new ArrayList<Coordinate>();
+		
+		possibleCoordinates.add(new Coordinate(0,0));
+		possibleCoordinates.add(new Coordinate(1,0));
+		possibleCoordinates.add(new Coordinate(2,0));
+		possibleCoordinates.add(new Coordinate(0,1));
+		possibleCoordinates.add(new Coordinate(0,2));
+		possibleCoordinates.add(new Coordinate(1,1));
+		possibleCoordinates.add(new Coordinate(1,2));
+		possibleCoordinates.add(new Coordinate(2,1));
+		possibleCoordinates.add(new Coordinate(2,2));
+		
+		class ActionNavChecker implements INavigationChecker {
+
+			@Override
+			public NavigationCheckResult CheckCoordinate(Coordinate coordinate) {
+				NavigationCheckResult checkResult = new NavigationCheckResult();
+				
+				if(possibleCoordinates.contains(coordinate)) {
+					checkResult.setCanNavigate(true);
+				}
+				
+				if(possibleCoordinates.contains(new Coordinate(coordinate.getX(), coordinate.getY() + 1))) {
+					checkResult.setCanMoveUp(true);
+				}
+				if(possibleCoordinates.contains(new Coordinate(coordinate.getX(), coordinate.getY() - 1))) {
+					checkResult.setCanMoveDown(true);
+				}
+				if(possibleCoordinates.contains(new Coordinate(coordinate.getX() + 1, coordinate.getY()))) {
+					checkResult.setCanMoveRight(true);
+				}
+				if(possibleCoordinates.contains(new Coordinate(coordinate.getX() - 1, coordinate.getY()))) {
+					checkResult.setCanMoveLeft(true);
+				}
+				return checkResult;
+			}
+
+			@Override
+			public int GetWeightedCostToOrigin(Coordinate fromCoordinate) {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+			
+		}
+		
+		class ActionReturnTrue implements IActionPerformer {
+
+			@Override
+			public boolean performAction(Coordinate navigatedTo) {
+				return true;
+			}
+			
+			
+		}
+		
+
+		
+		
+		
+		
+		ActionPropagatorNavigator apn = new ActionPropagatorNavigator();
+		
+		apn.setActionPerformer(new ActionReturnTrue());
+		apn.SetNavigationChecker(new ActionNavChecker());
+		apn.BeginCycle(1000);
+		
+		assertTrue(apn.GetCompletedCoordinates().size() == possibleCoordinates.size());
+		
+	}
 	
 }
