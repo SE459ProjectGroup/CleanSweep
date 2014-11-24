@@ -41,7 +41,6 @@ public class CleanSweep implements INavigationObserver, INavigationChecker, IAct
 		
 		//create dirt collection
 		dirtCollection = new DirtCollection();
-
 		
 	}
 	
