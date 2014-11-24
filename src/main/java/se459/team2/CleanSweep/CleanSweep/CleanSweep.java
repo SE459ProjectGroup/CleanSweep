@@ -114,6 +114,20 @@ public class CleanSweep implements INavigationObserver, INavigationChecker, IAct
 		System.out.println("Cell Debug Info " + currentCellInfo);
 		System.out.println("====================================");
 
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("====================================" + "\r\n");
+		sb.append("CS has moved to " + currentCellInfo.getXCoordinate() + ", " + currentCellInfo.getYCoordinate() + "\r\n");
+		sb.append("Current Battery Life: " + power.GetBatteryLevel() + "\r\n");
+		sb.append("Current Dirt Held: " + dirtCollection.getDirtCount() + "\r\n");
+		sb.append("Current Navigation State: " + navigationController.CurrentNavigationState() + "\r\n");
+		sb.append("Current Weighted Cost to home: " + this.GetWeightedCostToOrigin(navigationController.CurrentLocation()) + "\r\n");
+		sb.append("Cell Debug Info " + currentCellInfo + "\r\n");
+		sb.append("====================================" + "\r\n");
+
+		DiagnosticLogger dl = new DiagnosticLogger();			
+		dl.writeToFile(dl.getCurrentDateTime(), sb.toString());		
+
 		//charge the CS if we are at the charging station
 		if (currentCellInfo.isChargingStation()) {
 			//update our stats
