@@ -1,5 +1,6 @@
 package se459.team2.CleanSweep.CleanSweep;
 
+import se459.team2.CleanSweep.DiagnosticLogger.DiagnosticLogger;
 import se459.team2.CleanSweep.DirtCollection.DirtCollection;
 import se459.team2.CleanSweep.Navigation.*;
 import se459.team2.CleanSweep.PowerManagement.IPowerManager;
@@ -410,12 +411,16 @@ public class CleanSweep implements INavigationObserver, INavigationChecker, IAct
 		@Override
 		public String toString() {
 			StringBuilder sb = new StringBuilder();
-			
+
 			sb.append("Dirt Swept = " + this.dirtSwept + "\r\n");
 			sb.append("Spaces Moved = " + this.spacesMoves + "\r\n");
 			sb.append("Spaces Roamed = " + this.spacesRoamed + "\r\n");
 			sb.append("Power Used = " + this.powerUsed + "\r\n");
 			sb.append("Times Recharged = " + this.timesRecharged + "\r\n");
+
+			DiagnosticLogger dl = new DiagnosticLogger();			
+			dl.writeToFile(dl.getCurrentDateTime(), sb.toString());
+			
 			return sb.toString();
 			
 			

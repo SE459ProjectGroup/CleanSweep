@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class DiagnosticLogger implements IDiagnosticLogger {
+	public Object sb;
 
 	@Override
 	public String getCurrentDateTime() {
@@ -44,11 +45,11 @@ public class DiagnosticLogger implements IDiagnosticLogger {
 	}
 
 	@Override
-	public void writeToFile(String dateFormat) {
+	public void writeToFile(String dateFormat, String input) {
 		
 		try {
- //			String content = toString();
-			String content = "This is the content to write into file\n";
+
+			String content = input;
 			
 			File file = new File(dateFormat + ".log");
  
@@ -60,12 +61,13 @@ public class DiagnosticLogger implements IDiagnosticLogger {
 			FileWriter fw = new FileWriter(file,true);  //the true will append the new data
 			
 			//appends the string to the file
-			fw.write(toString());
+			fw.write("\n" + getCurrentDateTime() + "\n\n");
 			
-//			fw.write("add a line\n");//appends the string to the file
+			fw.write("Roaming Complete! Statistics Below: \n\n");
+			fw.write(content);
 			fw.close();
 			
-			System.out.println("Done");
+			System.out.println("Log Complete");
  
 		} catch (IOException e) {
 			System.err.println("IOException: " + e.getMessage());
@@ -131,7 +133,7 @@ public class DiagnosticLogger implements IDiagnosticLogger {
 				
 		String currentDateTime = dl.getCurrentDateTime();
 		dl.createNewFile(currentDateTime);
-		dl.writeToFile(currentDateTime);
+		dl.writeToFile(dl.getCurrentDateTime(), dl.toString());
 		dl.readFromFile(currentDateTime);
 		dl.listAllFiles();		
 	}

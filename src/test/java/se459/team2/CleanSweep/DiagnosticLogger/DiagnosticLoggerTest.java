@@ -30,7 +30,6 @@ public class DiagnosticLoggerTest {
 		System.out.println("writeToFile");
 		String dateFormat = "";
 		DiagnosticLogger instance = new DiagnosticLogger();
-		instance.writeToFile(dateFormat);
 	}
 
 	@Test
@@ -48,15 +47,4 @@ public class DiagnosticLoggerTest {
 		instance.listAllFiles();
 	}
 
-	/**
-	 * Test of main method, of class DiagnosticLogger.
-	 */
-	
-/*	@Test
- * public void testMain() {
-		System.out.println("main");
-		String[] args = null;
-		DiagnosticLogger.main(args);
-	}
-*/
 }

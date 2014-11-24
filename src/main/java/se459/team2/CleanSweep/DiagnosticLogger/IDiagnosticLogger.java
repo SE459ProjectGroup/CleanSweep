@@ -8,7 +8,7 @@ public interface IDiagnosticLogger {
 		
 	public void readFromFile(String dateFormat);
 	
-	public void writeToFile(String dateFormat);
+	public void writeToFile(String dateFormat, String input);
  
 	public void listAllFiles();
 }
